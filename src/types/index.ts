@@ -65,6 +65,7 @@ export interface Post {
   category: PostCategory;
   title: string;
   content: string;
+  images?: string[]; // base64 dataURL
   likes: number;
   commentCount: number;
   views: number;
@@ -80,6 +81,7 @@ export interface Comment {
   authorRole: UserRole;
   content: string;
   likes: number;
+  parentId?: string; // 대댓글
   createdAt: number;
 }
 
@@ -193,6 +195,8 @@ export interface Review {
   // 호환성
   likedAs?: string; // 1인가구/커플/직장인 등
   period?: string; // 거주 기간 (예: "6개월")
+  // 이미지 (리뷰 사진)
+  images?: string[];
   // 메타
   likes: number;
   createdAt: number;

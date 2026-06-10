@@ -142,3 +142,98 @@ body {
 .bg-warm-gradient {
   background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
 }
+
+/* 토스트 애니메이션 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-slide-up {
+  animation: slideUp 0.2s ease-out;
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* 다크모드 */
+:root[data-theme="dark"] {
+  --bg-base: #0d1117;
+  --bg-card: #161b22;
+  --border: #30363d;
+}
+:root[data-theme="dark"] body {
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+/* 다크모드 토큰 오버라이드 */
+[data-theme="dark"] .app-shell {
+  background: #161b22;
+  border-color: #30363d;
+}
+[data-theme="dark"] .warm-card {
+  background: #1c2128;
+  border-color: #30363d;
+}
+[data-theme="dark"] .bg-white {
+  background-color: #161b22 !important;
+}
+[data-theme="dark"] .text-concrete-900 {
+  color: #e6edf3 !important;
+}
+[data-theme="dark"] .text-concrete-700 {
+  color: #c9d1d9 !important;
+}
+[data-theme="dark"] .text-concrete-500,
+[data-theme="dark"] .text-concrete-400 {
+  color: #8b949e !important;
+}
+[data-theme="dark"] .border-concrete-200,
+[data-theme="dark"] .border-concrete-100 {
+  border-color: #30363d !important;
+}
+[data-theme="dark"] .bg-concrete-100 {
+  background-color: #21262d !important;
+}
+[data-theme="dark"] .divide-concrete-100 > * {
+  border-color: #30363d !important;
+}
+[data-theme="dark"] .bg-concrete-50 {
+  background-color: #1c2128 !important;
+}
+[data-theme="dark"] .bg-soft-gradient {
+  background: linear-gradient(180deg, #2d1f0d 0%, #161b22 100%) !important;
+}
+[data-theme="dark"] .bg-cool-gradient {
+  background: linear-gradient(180deg, #0d1d36 0%, #161b22 100%) !important;
+}
+[data-theme="dark"] .bg-warm-gradient {
+  background: linear-gradient(180deg, #0d2b1e 0%, #161b22 100%) !important;
+}
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #0d1117 !important;
+  color: #e6edf3 !important;
+  border-color: #30363d !important;
+}

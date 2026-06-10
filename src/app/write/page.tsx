@@ -10,6 +10,8 @@ import {
   uid,
 } from "@/lib/storage";
 import { ensureChannelsForAddress } from "@/lib/channels";
+import { ImagePicker } from "@/components/ImagePicker";
+import { showToast } from "@/lib/toast";
 import type { Post, PostCategory } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 
@@ -37,6 +39,7 @@ export default function WritePage() {
   const [category, setCategory] = useState<PostCategory>("자유");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -87,12 +90,14 @@ export default function WritePage() {
       category,
       title: title.trim(),
       content: content.trim(),
+      images: images.length > 0 ? images : undefined,
       likes: 0,
       commentCount: 0,
       views: 0,
       createdAt: Date.now(),
     };
     addPost(post);
+    showToast({ kind: "success", title: "글이 등록되었어요" });
     router.push(`/post/${post.id}`);
   };
 
@@ -176,10 +181,15 @@ export default function WritePage() {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={10}
+            rows={8}
             placeholder={`익명으로 ${user.nickname}(으)로 작성돼요.\n우리 동네 사람들과 이야기를 나눠보세요.`}
             className="w-full text-sm leading-relaxed border border-gray-200 rounded-lg p-3 focus:outline-none focus:border-officelink-primary resize-none"
           />
+        </div>
+
+        <div>
+          <label className="text-xs text-gray-500 mb-1.5 block">사진 첨부 (최대 4장, 각 500KB 이하)</label>
+          <ImagePicker images={images} onChange={setImages} max={4} />
         </div>
 
         <div className="text-[11px] text-gray-400">

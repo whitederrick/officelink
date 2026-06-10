@@ -67,6 +67,23 @@ export function PostCard({ post, channelTitle, showDM = true }: { post: Post; ch
       <div className="text-sm text-gray-600 leading-relaxed line-clamp-2 mb-2">
         {post.content}
       </div>
+      {post.images && post.images.length > 0 && (
+        <div className="flex gap-1.5 mb-2">
+          {post.images.slice(0, 4).map((src, i) => (
+            <div
+              key={i}
+              className="w-16 h-16 rounded-soft overflow-hidden border border-concrete-200 bg-concrete-100 shrink-0"
+            >
+              <img src={src} alt="" className="w-full h-full object-cover" />
+            </div>
+          ))}
+          {post.images.length > 4 && (
+            <div className="w-16 h-16 rounded-soft bg-concrete-100 flex items-center justify-center text-xs text-concrete-500">
+              +{post.images.length - 4}
+            </div>
+          )}
+        </div>
+      )}
       <div className="flex items-center gap-2 text-xs text-gray-500">
         <span
           className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${

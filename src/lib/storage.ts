@@ -499,3 +499,24 @@ export function toggleFavoriteService(userId: string, serviceId: string): boolea
   write(K_FAV_SVC, all);
   return true;
 }
+
+// ----- Pinned Channels -----
+const K_PINNED = "officelink:pinned";
+export function getPinnedChannels(userId: string): string[] {
+  const all = read<{ userId: string; channelId: string }[]>(K_PINNED, []);
+  return all.filter((p) => p.userId === userId).map((p) => p.channelId);
+}
+export function togglePinChannel(userId: string, channelId: string): boolean {
+  const all = read<{ userId: string; channelId: string }[]>(K_PINNED, []);
+  const exists = all.find((p) => p.userId === userId && p.channelId === channelId);
+  if (exists) {
+    write(
+      K_PINNED,
+      all.filter((p) => !(p.userId === userId && p.channelId === channelId)),
+    );
+    return false;
+  }
+  all.push({ userId, channelId });
+  write(K_PINNED, all);
+  return true;
+}

@@ -18,6 +18,7 @@ import {
   unlikePost,
 } from "@/lib/storage";
 import { RoleBadge } from "@/components/Badges";
+import { showToast } from "@/lib/toast";
 import type { Comment, Post } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 
@@ -97,7 +98,12 @@ export default function PostPage() {
 
   const onBookmark = () => {
     toggleBookmark(params.id);
-    setBookmarked((b) => !b);
+    const next = !bookmarked;
+    setBookmarked(next);
+    showToast({
+      kind: next ? "success" : "info",
+      title: next ? "저장 완료" : "저장 해제",
+    });
   };
 
   const submitComment = () => {
@@ -118,6 +124,7 @@ export default function PostPage() {
       createdAt: Date.now(),
     };
     addComment(c);
+    showToast({ kind: "success", title: "댓글 등록됨" });
     // 작성자에게 알림
     if (post.authorId !== u.id) {
       addNotification({
@@ -160,6 +167,18 @@ export default function PostPage() {
         <div className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap mb-4">
           {post.content}
         </div>
+        {post.images && post.images.length > 0 && (
+          <div className="grid grid-cols-2 gap-1.5 mb-4">
+            {post.images.map((src, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-soft overflow-hidden border border-concrete-200 bg-concrete-100"
+              >
+                <img src={src} alt="" className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span>👍 {post.likes}</span>
           <span>💬 {post.commentCount}</span>

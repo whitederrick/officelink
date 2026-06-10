@@ -231,10 +231,31 @@ export default function ProfilePage() {
           <span className="text-gray-400">›</span>
         </button>
         <button
+          onClick={() => router.push("/my-reviews")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🏠 내가 쓴 리뷰</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
           onClick={() => router.push("/bookmarks")}
           className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
         >
           <span>⭐ 저장한 글</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/liked")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>👍 좋아요한 글</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/favorite")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🏘 관심 거주지</span>
           <span className="text-gray-400">›</span>
         </button>
         <button
@@ -249,6 +270,41 @@ export default function ProfilePage() {
           className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
         >
           <span>💬 쪽지함</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/checklist")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>📋 이사 체크리스트</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/stats")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>📊 내 활동 통계</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/settings")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>⚙️ 설정</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/help")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>❓ 도움말</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/notices")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>📢 공지사항</span>
           <span className="text-gray-400">›</span>
         </button>
       </section>

@@ -17,7 +17,7 @@ interface Settings {
   pushComment: boolean;
   pushNotice: boolean;
   pushDM: boolean;
-  theme: "light" | "auto";
+  theme: "light" | "dark" | "auto";
   seniorMode: boolean;
   hcMode: boolean;
 }
@@ -46,6 +46,19 @@ function saveSettings(s: Settings) {
   // 시각적 모드 즉시 적용
   document.documentElement.classList.toggle("senior-mode-global", s.seniorMode);
   document.documentElement.classList.toggle("hc-mode", s.hcMode);
+  applyTheme(s.theme);
+}
+
+function applyTheme(theme: "light" | "dark" | "auto") {
+  if (typeof document === "undefined") return;
+  const resolved =
+    theme === "auto"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : theme;
+  document.documentElement.setAttribute("data-theme", resolved);
+  document.documentElement.style.colorScheme = resolved;
 }
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
@@ -79,7 +92,9 @@ export default function SettingsPage() {
       return;
     }
     setU(u);
-    setS(loadSettings());
+    const cur = loadSettings();
+    setS(cur);
+    applyTheme(cur.theme);
   }, [router]);
 
   const update = (patch: Partial<Settings>) => {
@@ -138,6 +153,21 @@ export default function SettingsPage() {
       <section className="px-4 pt-4">
         <h2 className="text-xs font-semibold text-concrete-500 mb-2">🖥 화면</h2>
         <div className="warm-card divide-y divide-concrete-100">
+          <div className="p-3 flex items-center gap-3">
+            <div className="flex-1">
+              <div className="text-sm font-medium text-concrete-900">테마</div>
+              <div className="text-[11px] text-concrete-500 mt-0.5">라이트/다크/시스템</div>
+            </div>
+            <select
+              value={s.theme}
+              onChange={(e) => update({ theme: e.target.value as any })}
+              className="text-xs h-9 px-2 border border-concrete-200 rounded-soft bg-white"
+            >
+              <option value="light">☀️ 라이트</option>
+              <option value="dark">🌙 다크</option>
+              <option value="auto">⚙️ 시스템</option>
+            </select>
+          </div>
           <Row
             label="큰 글씨 모드"
             description="글자/버튼을 더 크게 (어르신 친화)"
