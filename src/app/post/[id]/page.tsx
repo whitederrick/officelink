@@ -43,6 +43,7 @@ export default function PostPage() {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [lightbox, setLightbox] = useState<number>(-1);
+  const [replyTo, setReplyTo] = useState<Comment | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -123,26 +124,30 @@ export default function PostPage() {
       authorRole: u.role,
       content: draft.trim(),
       likes: 0,
+      parentId: replyTo?.id,
       createdAt: Date.now(),
     };
     addComment(c);
-    showToast({ kind: "success", title: "댓글 등록됨" });
-    // 작성자에게 알림
+    showToast({ kind: "success", title: replyTo ? "답글 등록됨" : "댓글 등록됨" });
+    // 알림
     if (post.authorId !== u.id) {
       addNotification({
         id: uid(),
-        type: "comment",
-        recipientId: post.authorId,
+        type: replyTo ? "reply" : "comment",
+        recipientId: replyTo ? replyTo.authorId : post.authorId,
         actorNickname: u.nickname,
         actorRole: u.role,
         postId: post.id,
         commentId: c.id,
-        message: `내 글 “${post.title}”에 댓글을 남겼습니다.`,
+        message: replyTo
+          ? `${replyTo.authorNickname}님에게 답글을 남겼습니다.`
+          : `내 글 “${post.title}”에 댓글을 남겼습니다.`,
         read: false,
         createdAt: Date.now(),
       });
     }
     setDraft("");
+    setReplyTo(null);
     refresh();
   };
 
@@ -223,29 +228,50 @@ export default function PostPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {comments.map((c) => (
-              <div key={c.id} className="flex gap-2">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <RoleBadge role={c.authorRole} size="xs" />
-                    <span className="text-xs font-medium text-gray-700">
-                      {c.authorNickname}
-                    </span>
-                    <span className="text-[11px] text-gray-400">
-                      · {timeAgo(c.createdAt)}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-800 leading-relaxed">
-                    {c.content}
-                  </div>
+            {comments.filter((c) => !c.parentId).map((c) => {
+              const replies = comments.filter((x) => x.parentId === c.id);
+              return (
+                <div key={c.id}>
+                  <CommentItem
+                    comment={c}
+                    onReply={() => setReplyTo(c)}
+                  />
+                  {replies.length > 0 && (
+                    <div className="ml-6 mt-2 pl-3 border-l-2 border-concrete-200 space-y-2">
+                      {replies.map((r) => (
+                        <CommentItem
+                          key={r.id}
+                          comment={r}
+                          onReply={() => setReplyTo(c)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
       {/* 댓글 입력 */}
+      {replyTo && (
+        <div className="fixed bottom-28 left-0 right-0 z-10">
+          <div className="app-shell px-3">
+            <div className="bg-warm-50 border border-warm-200 rounded-soft px-3 py-2 flex items-center justify-between">
+              <div className="text-[11px] text-concrete-700 truncate">
+                <span className="font-semibold">{replyTo.authorNickname}</span>에게 답글
+              </div>
+              <button
+                onClick={() => setReplyTo(null)}
+                className="text-xs text-concrete-500 px-2"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200">
         <div className="app-shell px-3 py-2 flex gap-2">
           <input
@@ -283,6 +309,36 @@ export default function PostPage() {
           onChange={setLightbox}
         />
       )}
+    </div>
+  );
+}
+
+function CommentItem({ comment, onReply }: { comment: Comment; onReply: () => void }) {
+  return (
+    <div className="flex gap-2">
+      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-concrete-200 to-concrete-300 flex items-center justify-center text-xs font-bold text-concrete-700 shrink-0">
+        {comment.authorNickname.charAt(0)}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          <RoleBadge role={comment.authorRole} size="xs" />
+          <span className="text-xs font-medium text-gray-700">
+            {comment.authorNickname}
+          </span>
+          <span className="text-[11px] text-gray-400">
+            · {timeAgo(comment.createdAt)}
+          </span>
+        </div>
+        <div className="text-sm text-gray-800 leading-relaxed">
+          {comment.content}
+        </div>
+        <button
+          onClick={onReply}
+          className="text-[11px] text-warm-700 font-semibold mt-1"
+        >
+          ↳ 답글
+        </button>
+      </div>
     </div>
   );
 }

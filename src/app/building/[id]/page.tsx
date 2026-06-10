@@ -20,6 +20,7 @@ import { heroClass } from "@/lib/display";
 import type { Building, Review, Service } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 import { BuildingPhoto } from "@/components/Illustrations";
+import { showToast } from "@/lib/toast";
 
 function Star({ value, size = "md" }: { value: number; size?: "sm" | "md" | "lg" }) {
   const sz = size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-base";
@@ -376,13 +377,35 @@ export default function BuildingPage() {
         </div>
       )}
 
-      <div className="p-4">
+      <div className="p-4 space-y-2">
         <Link
           href="/review/write"
           className="cta-primary w-full h-12 rounded-soft flex items-center justify-center text-sm"
         >
           ✍️ 이 건물 리뷰 쓰기
         </Link>
+        <Link
+          href={`/neighbors?building=${building.id}`}
+          className="cta-secondary w-full h-12 rounded-soft flex items-center justify-center text-sm"
+        >
+          🏘 주변 이웃 보기
+        </Link>
+        <button
+          onClick={() => {
+            if (typeof navigator !== "undefined" && (navigator as any).share) {
+              (navigator as any).share({
+                title: building.name,
+                text: `${building.name} - ${building.address}`,
+                url: typeof window !== "undefined" ? window.location.href : "",
+              });
+            } else {
+              showToast({ kind: "info", title: "공유 링크 복사됨" });
+            }
+          }}
+          className="w-full h-11 text-sm font-medium text-concrete-700 bg-white border border-concrete-200 rounded-soft active:bg-concrete-50"
+        >
+          🔗 공유하기
+        </button>
       </div>
     </div>
   );
