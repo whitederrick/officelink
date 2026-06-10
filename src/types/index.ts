@@ -308,3 +308,85 @@ export interface FavoriteService {
   serviceId: string;
   createdAt: number;
 }
+
+// =============================================
+// v0.4 — 대시보드, 차트, 해시태그, 투표, i18n
+// =============================================
+
+// 건물 공지사항 (관리소 전용)
+export interface BuildingNotice {
+  id: string;
+  buildingId: string;
+  authorId: string;
+  authorName: string;
+  title: string;
+  content: string;
+  important: boolean;
+  createdAt: number;
+}
+
+// 익명 투표
+export interface Poll {
+  id: string;
+  channelId?: string; // 특정 채널에 속하면
+  postId?: string; // 특정 글에 속하면
+  buildingId?: string; // 특정 건물에 속하면
+  question: string;
+  options: { id: string; text: string; votes: number }[];
+  voters: string[]; // userId 목록 (중복 방지)
+  multiple: boolean; // 복수 선택 허용
+  endsAt?: number; // 종료 시각
+  createdAt: number;
+}
+
+// 해시태그
+export interface Hashtag {
+  tag: string;
+  count: number;
+}
+
+// 키워드 알림 (관심 단어)
+export interface KeywordAlert {
+  userId: string;
+  keyword: string;
+  createdAt: number;
+}
+
+// 월별 관리비 (mock)
+export interface ManagementFee {
+  id: string;
+  buildingId: string;
+  unitNumber?: string; // 호수
+  year: number;
+  month: number;
+  base: number; // 기본 관리비
+  utilities: number; // 공과금
+  total: number;
+  paid: boolean;
+  createdAt: number;
+}
+
+// 건물 차트 데이터 (계산된 것)
+export interface BuildingStats {
+  buildingId: string;
+  totalReviews: number;
+  ratingDistribution: { star: number; count: number }[];
+  categoryAverages: {
+    noise: number;
+    clean: number;
+    facility: number;
+    management: number;
+    safety: number;
+  };
+  monthlyReviews: { month: string; count: number; avgRating: number }[];
+  tagCloud: { tag: string; count: number; sentiment: "pos" | "neg" }[];
+}
+
+// 동네별 통계
+export interface NeighborhoodStats {
+  name: string;
+  buildingCount: number;
+  avgRating: number;
+  totalReviews: number;
+  topTags: string[];
+}

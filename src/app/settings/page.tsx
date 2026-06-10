@@ -9,6 +9,7 @@ import {
 } from "@/lib/storage";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
+import { getLang, setLang } from "@/lib/i18n";
 
 const SETTINGS_KEY = "officelink:settings";
 
@@ -183,6 +184,26 @@ export default function SettingsPage() {
 
       {/* 앱 정보 */}
       <section className="px-4 pt-4">
+        <h2 className="text-xs font-semibold text-concrete-500 mb-2">🌐 언어 / 앱 정보</h2>
+        <div className="warm-card divide-y divide-concrete-100">
+          <div className="p-3 flex items-center gap-3">
+            <div className="flex-1">
+              <div className="text-sm font-medium text-concrete-900">언어 (Language)</div>
+              <div className="text-[11px] text-concrete-500 mt-0.5">한국어 / English</div>
+            </div>
+            <select
+              value={getLang()}
+              onChange={(e) => setLang(e.target.value as "ko" | "en")}
+              className="text-xs h-9 px-2 border border-concrete-200 rounded-soft bg-white"
+            >
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="en">🇺🇸 English</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pt-2">
         <h2 className="text-xs font-semibold text-concrete-500 mb-2">ℹ️ 앱 정보</h2>
         <div className="warm-card divide-y divide-concrete-100">
           <LinkRow label="공지사항" href="/notices" />

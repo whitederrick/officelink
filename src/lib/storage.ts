@@ -527,3 +527,92 @@ export function togglePinChannel(userId: string, channelId: string): boolean {
   write(K_PINNED, all);
   return true;
 }
+
+// ----- Building Notices -----
+const K_BUILDING_NOTICES = "officelink:buildingNotices";
+export function getBuildingNotices(buildingId: string): import("@/types").BuildingNotice[] {
+  return read<import("@/types").BuildingNotice[]>(K_BUILDING_NOTICES, [])
+    .filter((n) => n.buildingId === buildingId)
+    .sort((a, b) => b.createdAt - a.createdAt);
+}
+export function addBuildingNotice(n: import("@/types").BuildingNotice) {
+  const all = read<import("@/types").BuildingNotice[]>(K_BUILDING_NOTICES, []);
+  all.push(n);
+  write(K_BUILDING_NOTICES, all);
+}
+export function deleteBuildingNotice(id: string) {
+  const all = read<import("@/types").BuildingNotice[]>(K_BUILDING_NOTICES, []);
+  write(
+    K_BUILDING_NOTICES,
+    all.filter((n) => n.id !== id),
+  );
+}
+
+// ----- Polls -----
+const K_POLLS = "officelink:polls";
+export function getPolls(filter?: { postId?: string; buildingId?: string; channelId?: string }): import("@/types").Poll[] {
+  let all = read<import("@/types").Poll[]>(K_POLLS, []);
+  if (filter?.postId) all = all.filter((p) => p.postId === filter.postId);
+  if (filter?.buildingId) all = all.filter((p) => p.buildingId === filter.buildingId);
+  if (filter?.channelId) all = all.filter((p) => p.channelId === filter.channelId);
+  return all.sort((a, b) => b.createdAt - a.createdAt);
+}
+export function getPoll(id: string): import("@/types").Poll | null {
+  return read<import("@/types").Poll[]>(K_POLLS, []).find((p) => p.id === id) ?? null;
+}
+export function addPoll(p: import("@/types").Poll) {
+  const all = read<import("@/types").Poll[]>(K_POLLS, []);
+  all.push(p);
+  write(K_POLLS, all);
+}
+export function votePoll(pollId: string, optionIds: string[], userId: string): boolean {
+  const all = read<import("@/types").Poll[]>(K_POLLS, []);
+  const idx = all.findIndex((p) => p.id === pollId);
+  if (idx < 0) return false;
+  const p = all[idx];
+  if (p.voters.includes(userId)) return false;
+  const updated: import("@/types").Poll = {
+    ...p,
+    voters: [...p.voters, userId],
+    options: p.options.map((o) =>
+      optionIds.includes(o.id) ? { ...o, votes: o.votes + 1 } : o,
+    ),
+  };
+  all[idx] = updated;
+  write(K_POLLS, all);
+  return true;
+}
+
+// ----- Keyword Alerts -----
+const K_KEYWORD = "officelink:keywordAlerts";
+export function getKeywordAlerts(userId: string): string[] {
+  return read<import("@/types").KeywordAlert[]>(K_KEYWORD, [])
+    .filter((k) => k.userId === userId)
+    .map((k) => k.keyword);
+}
+export function addKeywordAlert(userId: string, keyword: string) {
+  const all = read<import("@/types").KeywordAlert[]>(K_KEYWORD, []);
+  if (all.find((k) => k.userId === userId && k.keyword === keyword)) return;
+  all.push({ userId, keyword, createdAt: Date.now() });
+  write(K_KEYWORD, all);
+}
+export function removeKeywordAlert(userId: string, keyword: string) {
+  const all = read<import("@/types").KeywordAlert[]>(K_KEYWORD, []);
+  write(
+    K_KEYWORD,
+    all.filter((k) => !(k.userId === userId && k.keyword === keyword)),
+  );
+}
+
+// ----- Management Fees -----
+const K_FEES = "officelink:fees";
+export function getManagementFees(buildingId: string): import("@/types").ManagementFee[] {
+  return read<import("@/types").ManagementFee[]>(K_FEES, [])
+    .filter((f) => f.buildingId === buildingId)
+    .sort((a, b) => b.year - a.year || b.month - a.month);
+}
+export function addManagementFee(f: import("@/types").ManagementFee) {
+  const all = read<import("@/types").ManagementFee[]>(K_FEES, []);
+  all.push(f);
+  write(K_FEES, all);
+}

@@ -307,6 +307,41 @@ export default function ProfilePage() {
           <span>📢 공지사항</span>
           <span className="text-gray-400">›</span>
         </button>
+        <button
+          onClick={() => router.push("/polls")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>📊 익명 투표</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/neighborhoods")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🏘 동네별 통계</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/fees")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>💰 관리비</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/landlord-dashboard")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🏢 임대인 대시보드</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/manager-dashboard")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🔧 관리소 대시보드</span>
+          <span className="text-gray-400">›</span>
+        </button>
       </section>
 
       {/* 설정 */}

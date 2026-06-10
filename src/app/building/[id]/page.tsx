@@ -21,6 +21,8 @@ import type { Building, Review, Service } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 import { BuildingPhoto } from "@/components/Illustrations";
 import { showToast } from "@/lib/toast";
+import { calcBuildingStats } from "@/lib/stats";
+import { StarBar, TagCloud, Sparkline } from "@/components/Charts";
 
 function Star({ value, size = "md" }: { value: number; size?: "sm" | "md" | "lg" }) {
   const sz = size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-base";
@@ -54,9 +56,10 @@ export default function BuildingPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [replies, setReplies] = useState<import("@/types").ReviewReply[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [tab, setTab] = useState<"review" | "service" | "info">("review");
+  const [tab, setTab] = useState<"review" | "stats" | "service" | "info">("review");
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
   const [replyOpen, setReplyOpen] = useState<string | null>(null);
+  const [stats, setStats] = useState<ReturnType<typeof calcBuildingStats> | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -73,6 +76,7 @@ export default function BuildingPage() {
     setReviews(getReviews(b.id));
     setReplies(getRepliesByBuilding(b.id));
     setServices(getServices().filter((s) => s.buildingIds?.includes(b.id) || s.sigungu === b.sigungu));
+    setStats(calcBuildingStats(b.id));
   }, [router, params.id]);
 
   const submitReply = (reviewId: string) => {
@@ -186,6 +190,7 @@ export default function BuildingPage() {
         <div className="flex">
           {([
             ["review", `리뷰 ${reviews.length}`],
+            ["stats", "통계"],
             ["service", `편의 서비스 ${services.length}`],
             ["info", "건물 정보"],
           ] as const).map(([k, label]) => (
@@ -347,6 +352,76 @@ export default function BuildingPage() {
                 </div>
               </Link>
             ))
+          )}
+        </div>
+      )}
+
+      {tab === "stats" && stats && (
+        <div className="p-4 space-y-4">
+          {/* 별점 분포 */}
+          <div className="warm-card p-4">
+            <h3 className="text-sm font-bold text-concrete-900 mb-3">⭐ 별점 분포</h3>
+            {stats.totalReviews === 0 ? (
+              <div className="text-xs text-concrete-400 py-3 text-center">리뷰가 없어 통계를 표시할 수 없어요.</div>
+            ) : (
+              <div className="space-y-1.5">
+                {stats.ratingDistribution.slice().reverse().map((d) => (
+                  <StarBar key={d.star} star={d.star} count={d.count} total={stats.totalReviews} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 월별 추이 */}
+          {stats.totalReviews > 0 && (
+            <div className="warm-card p-4">
+              <h3 className="text-sm font-bold text-concrete-900 mb-2">📈 최근 6개월 리뷰</h3>
+              <Sparkline
+                data={stats.monthlyReviews.map((m) => m.count)}
+                width={300}
+                height={50}
+              />
+              <div className="flex justify-between text-[10px] text-concrete-500 mt-1">
+                {stats.monthlyReviews.map((m) => (
+                  <span key={m.month}>{m.month.slice(5)}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 카테고리별 */}
+          {stats.totalReviews > 0 && (
+            <div className="warm-card p-4">
+              <h3 className="text-sm font-bold text-concrete-900 mb-3">📊 카테고리별 평균</h3>
+              <div className="space-y-1.5">
+                {([
+                  ["소음", stats.categoryAverages.noise],
+                  ["청결", stats.categoryAverages.clean],
+                  ["시설", stats.categoryAverages.facility],
+                  ["관리", stats.categoryAverages.management],
+                  ["안전", stats.categoryAverages.safety],
+                ] as const).map(([k, v]) => (
+                  <div key={k} className="flex items-center gap-2">
+                    <span className="text-xs text-concrete-700 w-14">{k}</span>
+                    <div className="flex-1 h-2 bg-concrete-100 rounded-pill overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-warm-400 to-warm-500"
+                        style={{ width: `${(v / 5) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-warm-700 w-8 text-right">{v.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 태그 클라우드 */}
+          {stats.tagCloud.length > 0 && (
+            <div className="warm-card p-4">
+              <h3 className="text-sm font-bold text-concrete-900 mb-3">🏷 자주 언급된 키워드</h3>
+              <TagCloud tags={stats.tagCloud} />
+            </div>
           )}
         </div>
       )}

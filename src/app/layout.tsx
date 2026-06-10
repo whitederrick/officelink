@@ -4,14 +4,29 @@ import { AppShell } from "@/components/AppShell";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
-  title: "OFFICELINK · 오피스텔 동네 커뮤니티",
-  description: "1인가구 오피스텔 라이프 플랫폼 - 거주지 리뷰, 집주인 평가, 생활 편의 서비스",
+  title: {
+    default: "OFFICELINK · 1인가구 오피스텔 라이프 플랫폼",
+    template: "%s · OFFICELINK",
+  },
+  description: "오피스텔 리뷰, 임대인/관리소 평판, 생활 편의 서비스를 한 곳에서. 1인가구를 위한 스마트한 동네 라이프.",
+  keywords: ["오피스텔", "리뷰", "1인가구", "임대", "관리소", "편의서비스", "동네"],
+  authors: [{ name: "OFFICELINK Team" }],
+  openGraph: {
+    type: "website",
+    title: "OFFICELINK · 1인가구 오피스텔 라이프 플랫폼",
+    description: "오피스텔 리뷰, 임대인/관리소 평판, 생활 편의 서비스",
+    siteName: "OFFICELINK",
+  },
   manifest: "/manifest.json",
   themeColor: "#f59e0b",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "OFFICELINK",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
