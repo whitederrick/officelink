@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { RoleBadge } from "@/components/Badges";
 import { showToast } from "@/lib/toast";
+import { Lightbox } from "@/components/Lightbox";
 import type { Comment, Post } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 
@@ -41,6 +42,7 @@ export default function PostPage() {
   const [bump, setBump] = useState(0);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [lightbox, setLightbox] = useState<number>(-1);
 
   useEffect(() => {
     setMounted(true);
@@ -170,12 +172,13 @@ export default function PostPage() {
         {post.images && post.images.length > 0 && (
           <div className="grid grid-cols-2 gap-1.5 mb-4">
             {post.images.map((src, i) => (
-              <div
+              <button
                 key={i}
+                onClick={() => setLightbox(i)}
                 className="aspect-square rounded-soft overflow-hidden border border-concrete-200 bg-concrete-100"
               >
                 <img src={src} alt="" className="w-full h-full object-cover" />
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -270,6 +273,16 @@ export default function PostPage() {
           </button>
         </div>
       </div>
+
+      {/* 라이트박스 */}
+      {post.images && post.images.length > 0 && (
+        <Lightbox
+          images={post.images}
+          index={lightbox}
+          onClose={() => setLightbox(-1)}
+          onChange={setLightbox}
+        />
+      )}
     </div>
   );
 }

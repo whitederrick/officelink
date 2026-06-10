@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
+  addReply,
+  deleteReply,
   getBuilding,
   getProfileByName,
   getRepliesByBuilding,
@@ -17,6 +19,7 @@ import {
 import { heroClass } from "@/lib/display";
 import type { Building, Review, Service } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
+import { BuildingPhoto } from "@/components/Illustrations";
 
 function Star({ value, size = "md" }: { value: number; size?: "sm" | "md" | "lg" }) {
   const sz = size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-base";
@@ -51,6 +54,8 @@ export default function BuildingPage() {
   const [replies, setReplies] = useState<import("@/types").ReviewReply[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [tab, setTab] = useState<"review" | "service" | "info">("review");
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+  const [replyOpen, setReplyOpen] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -68,6 +73,27 @@ export default function BuildingPage() {
     setReplies(getRepliesByBuilding(b.id));
     setServices(getServices().filter((s) => s.buildingIds?.includes(b.id) || s.sigungu === b.sigungu));
   }, [router, params.id]);
+
+  const submitReply = (reviewId: string) => {
+    if (!building) return;
+    const text = (replyDrafts[reviewId] || "").trim();
+    if (!text) return;
+    // 가짜 임대인/관리소 사용자처럼 동작
+    const authorKind = Math.random() < 0.5 ? "landlord" : "manager";
+    const authorName = authorKind === "landlord" ? "김집주" : "상암오벨리스크 관리사무소";
+    addReply({
+      id: uid(),
+      reviewId,
+      buildingId: building.id,
+      authorKind,
+      authorName,
+      content: text,
+      createdAt: Date.now(),
+    });
+    setReplyDrafts({ ...replyDrafts, [reviewId]: "" });
+    setReplyOpen(null);
+    setReplies(getRepliesByBuilding(building.id));
+  };
 
   if (!mounted || !building) {
     return <LoadingIntro />;
@@ -245,6 +271,40 @@ export default function BuildingPage() {
                       <div className="text-xs text-concrete-700 leading-relaxed">{rp.content}</div>
                     </div>
                   ))}
+
+                  {/* 답글 작성 폼 */}
+                  {replyOpen === r.id ? (
+                    <div className="mt-3 ml-3 p-3 bg-warm-50/30 border border-warm-200 rounded-soft">
+                      <textarea
+                        value={replyDrafts[r.id] || ""}
+                        onChange={(e) => setReplyDrafts({ ...replyDrafts, [r.id]: e.target.value })}
+                        rows={2}
+                        placeholder="답글을 남겨주세요. (임대인/관리소 시점)"
+                        className="w-full text-xs border border-concrete-200 rounded-soft p-2 bg-white focus:outline-none focus:border-warm-500 resize-none"
+                      />
+                      <div className="flex gap-1.5 mt-2 justify-end">
+                        <button
+                          onClick={() => setReplyOpen(null)}
+                          className="h-7 px-3 text-xs text-concrete-600 active:bg-concrete-100 rounded"
+                        >
+                          취소
+                        </button>
+                        <button
+                          onClick={() => submitReply(r.id)}
+                          className="h-7 px-3 text-xs font-semibold bg-warm-500 text-white rounded active:bg-warm-600"
+                        >
+                          등록
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setReplyOpen(r.id)}
+                      className="mt-2 ml-1 text-[11px] text-warm-700 font-semibold"
+                    >
+                      💬 답글 쓰기
+                    </button>
+                  )}
                 </article>
               ))}
             </div>

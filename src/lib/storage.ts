@@ -449,6 +449,13 @@ export function addReply(r: import("@/types").ReviewReply) {
   all.push(r);
   write(K_REPLIES, all);
 }
+export function deleteReply(id: string) {
+  const all = read<import("@/types").ReviewReply[]>(K_REPLIES, []);
+  write(
+    K_REPLIES,
+    all.filter((r) => r.id !== id),
+  );
+}
 
 // ----- AS Requests -----
 const K_AS = "officelink:asRequests";

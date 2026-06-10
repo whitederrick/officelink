@@ -181,3 +181,88 @@ export function IllustWelcome({ size = 120 }: { size?: number }) {
     </svg>
   );
 }
+
+// 건물 사진 일러스트 (3종 - 건물 스타일별)
+export function BuildingPhoto({ variant, size = 320 }: { variant: 1 | 2 | 3; size?: number }) {
+  const variants = {
+    1: { sky: "#dbeafe", wall: "#1f6feb", accent: "#1d4ed8", win: "#dbeafe" },
+    2: { sky: "#fff7ed", wall: "#f59e0b", accent: "#d97706", win: "#fef3c7" },
+    3: { sky: "#f0fdf4", wall: "#10b981", accent: "#059669", win: "#d1fae5" },
+  };
+  const v = variants[variant];
+
+  return (
+    <svg viewBox="0 0 320 200" width={size} height={size * 0.625} xmlns="http://www.w3.org/2000/svg">
+      {/* 하늘 */}
+      <rect x="0" y="0" width="320" height="200" fill={v.sky} />
+      {/* 구름 */}
+      <g opacity="0.6">
+        <ellipse cx="60" cy="40" rx="25" ry="10" fill="#ffffff" />
+        <ellipse cx="80" cy="35" rx="20" ry="8" fill="#ffffff" />
+        <ellipse cx="240" cy="30" rx="22" ry="9" fill="#ffffff" />
+        <ellipse cx="260" cy="36" rx="18" ry="7" fill="#ffffff" />
+      </g>
+      {/* 태양 */}
+      <circle cx="280" cy="30" r="15" fill="#fcd34d">
+        <animate attributeName="r" values="14;16;14" dur="3s" repeatCount="indefinite" />
+      </circle>
+
+      {/* 지면 */}
+      <rect x="0" y="170" width="320" height="30" fill="#9ba3ae" />
+      <rect x="0" y="170" width="320" height="3" fill="#6b7280" />
+
+      {/* 메인 건물 */}
+      <rect x="60" y="50" width="200" height="120" fill={v.wall} />
+      <rect x="55" y="45" width="210" height="8" fill={v.accent} />
+
+      {/* 창문들 */}
+      {[0, 1, 2, 3].map((row) =>
+        [0, 1, 2, 3, 4, 5].map((col) => {
+          const x = 75 + col * 28;
+          const y = 60 + row * 25;
+          const lit = (row + col + variant) % 3 === 0;
+          return (
+            <g key={`${row}-${col}`}>
+              <rect x={x} y={y} width="18" height="18" fill={lit ? "#fde68a" : v.win} />
+              <rect x={x} y={y} width="18" height="18" fill="none" stroke={v.accent} strokeWidth="0.5" />
+              {lit && (
+                <circle cx={x + 9} cy={y + 9} r="1.5" fill={v.wall}>
+                  <animate attributeName="opacity" values="0.3;1;0.3" dur={`${1.5 + (row + col) * 0.2}s`} repeatCount="indefinite" />
+                </circle>
+              )}
+            </g>
+          );
+        }),
+      )}
+
+      {/* 현관문 */}
+      <rect x="150" y="140" width="20" height="30" fill="#1f2937" />
+      <circle cx="167" cy="155" r="0.8" fill="#fbbf24" />
+
+      {/* 나무 */}
+      <g transform="translate(20 130)">
+        <rect x="0" y="20" width="4" height="20" fill="#7c2d12" />
+        <circle cx="2" cy="15" r="10" fill="#10b981" />
+      </g>
+      <g transform="translate(295 130)">
+        <rect x="0" y="20" width="4" height="20" fill="#7c2d12" />
+        <circle cx="2" cy="15" r="10" fill="#10b981" />
+      </g>
+
+      {/* 택배 트럭 (살짝) */}
+      <g transform="translate(0 160)">
+        <rect x="240" y="0" width="20" height="10" rx="1" fill="#1f6feb" />
+        <rect x="232" y="2" width="8" height="8" rx="0.5" fill="#3b82f6" />
+        <circle cx="237" cy="11" r="2" fill="#1f2937" />
+        <circle cx="252" cy="11" r="2" fill="#1f2937" />
+        <animateTransform
+          attributeName="transform"
+          type="translate"
+          values="0 0; 15 0; 0 0"
+          dur="8s"
+          repeatCount="indefinite"
+        />
+      </g>
+    </svg>
+  );
+}

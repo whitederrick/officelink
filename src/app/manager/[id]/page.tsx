@@ -5,8 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getBuildings, getProfile, getUser } from "@/lib/storage";
 import { heroClass } from "@/lib/display";
-import type { Building, Profile } from "@/types";
+import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
+import type { Building, Profile } from "@/types";
 
 export default function ManagerPage() {
   const router = useRouter();
@@ -35,9 +36,9 @@ export default function ManagerPage() {
   }
 
   return (
-    <div className={`${MODE("senior-mode")} bg-white min-h-screen`}>
+    <div className="senior-mode bg-white min-h-screen">
+      <PageHeader title="관리사무소" back="history" />
       <div className={`${heroClass.sage} px-4 pt-4 pb-5 border-b border-concrete-100`}>
-        <button onClick={() => router.back()} className="text-lg mb-3 text-concrete-600">‹</button>
         <div className="flex items-center gap-2 mb-1">
           <span className="px-2 py-0.5 bg-sage-50 text-sage-700 rounded text-[11px] font-semibold">
             관리사무소
