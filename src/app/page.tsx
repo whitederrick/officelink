@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   getAddresses,
+  getBuildings,
   getChannels,
   getPosts,
   getUser,
@@ -33,6 +34,11 @@ export default function HomePage() {
     const addresses = getAddresses(user.id);
     const allChannels = getChannels();
     const allPosts = getPosts();
+    const allBuildings = getBuildings();
+    const hotBuildings = allBuildings
+      .filter((b: any) => b.ratingCount > 0)
+      .sort((a: any, b: any) => b.ratingAvg - a.ratingAvg)
+      .slice(0, 3);
 
     // 내 채널 (오피스텔 + 지역) — 사용자가 가진 주소의 scope
     const myScopes = new Set<string>();
@@ -56,14 +62,14 @@ export default function HomePage() {
       })
       .slice(0, 5);
 
-    return { user, myChannels, publicChannels, hot, allChannels };
+    return { user, myChannels, publicChannels, hot, allChannels, allBuildings, hotBuildings };
   }, [mounted]);
 
   if (!mounted || !data) {
     return <LoadingIntro />;
   }
 
-  const { user, myChannels, publicChannels, hot, allChannels } = data;
+  const { user, myChannels, publicChannels, hot, allChannels, hotBuildings } = data;
   const channelMap = new Map(allChannels.map((c) => [c.id, c]));
 
   return (
@@ -87,6 +93,34 @@ export default function HomePage() {
         <span>🔍</span>
         <span>건물·리뷰·서비스를 검색해 보세요</span>
       </Link>
+
+      {/* 인기 건물 */}
+      {hotBuildings && hotBuildings.length > 0 && (
+        <section className="px-4 pt-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="text-sm font-bold text-concrete-900">🏢 인기 건물</h2>
+            <Link href="/buildings" className="text-[11px] text-warm-700 font-semibold">
+              전체 보기 ›
+            </Link>
+          </div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4">
+            {hotBuildings.map((b) => (
+              <Link
+                key={b.id}
+                href={`/building/${b.id}`}
+                className="warm-card p-3 shrink-0 w-44 active:scale-95 transition"
+              >
+                <div className="text-[10px] text-concrete-500 mb-0.5 truncate">{b.sigungu} {b.dong}</div>
+                <div className="text-sm font-bold text-concrete-900 line-clamp-2 leading-tight mb-1">{b.name}</div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-bold text-warm-600">{b.ratingAvg.toFixed(1)}</span>
+                  <span className="text-[10px] text-concrete-500">리뷰 {b.ratingCount}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 빠른 메뉴 (건물/리뷰/서비스) */}
       <section className="px-4 pt-3">
