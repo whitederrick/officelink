@@ -301,9 +301,13 @@ export function t(key: string, lang: Lang = "ko"): string {
   return DICT[lang]?.[key] || DICT.ko[key] || key;
 }
 
-export const LANG_LABEL: Record<Lang, { flag: string; label: string; native: string }> = {
-  ko: { flag: "🇰🇷", label: "Korean", native: "한국어" },
-  en: { flag: "🇺🇸", label: "English", native: "English" },
-  ja: { flag: "🇯🇵", label: "Japanese", native: "日本語" },
-  zh: { flag: "🇨🇳", label: "Chinese", native: "中文" },
+export function getDict(lang: Lang): Dict {
+  return DICT[lang] ?? DICT.ko;
+}
+
+export const LANG_LABEL: Record<Lang, { flag: string; label: string; native: string; english: string }> = {
+  ko: { flag: "🇰🇷", label: "Korean", native: "한국어", english: "Korean" },
+  en: { flag: "🇺🇸", label: "English", native: "English", english: "English" },
+  ja: { flag: "🇯🇵", label: "Japanese", native: "日本語", english: "Japanese" },
+  zh: { flag: "🇨🇳", label: "Chinese", native: "中文", english: "Chinese" },
 };

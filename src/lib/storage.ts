@@ -616,3 +616,117 @@ export function addManagementFee(f: import("@/types").ManagementFee) {
   all.push(f);
   write(K_FEES, all);
 }
+
+// ----- Short-term listings -----
+const K_LISTINGS = "officelink:listings";
+export function getListings(filter?: { buildingId?: string }): import("@/types").ShortTermListing[] {
+  let all = read<import("@/types").ShortTermListing[]>(K_LISTINGS, []);
+  if (filter?.buildingId) all = all.filter((l) => l.buildingId === filter.buildingId);
+  return all.sort((a, b) => b.createdAt - a.createdAt);
+}
+export function getListing(id: string): import("@/types").ShortTermListing | null {
+  return read<import("@/types").ShortTermListing[]>(K_LISTINGS, []).find((l) => l.id === id) ?? null;
+}
+export function addListing(l: import("@/types").ShortTermListing) {
+  const all = read<import("@/types").ShortTermListing[]>(K_LISTINGS, []);
+  all.push(l);
+  write(K_LISTINGS, all);
+}
+
+// ----- Events -----
+const K_EVENTS = "officelink:events";
+export function getEvents(): import("@/types").CommunityEvent[] {
+  return read<import("@/types").CommunityEvent[]>(K_EVENTS, []).sort((a, b) => a.startsAt - b.startsAt);
+}
+export function getEvent(id: string): import("@/types").CommunityEvent | null {
+  return read<import("@/types").CommunityEvent[]>(K_EVENTS, []).find((e) => e.id === id) ?? null;
+}
+export function addEvent(e: import("@/types").CommunityEvent) {
+  const all = read<import("@/types").CommunityEvent[]>(K_EVENTS, []);
+  all.push(e);
+  write(K_EVENTS, all);
+}
+export function joinEvent(eventId: string, userId: string, nickname: string) {
+  const all = read<import("@/types").CommunityEvent[]>(K_EVENTS, []);
+  write(
+    K_EVENTS,
+    all.map((e) => {
+      if (e.id !== eventId) return e;
+      if (e.participants.find((p) => p.userId === userId)) return e;
+      return {
+        ...e,
+        participants: [...e.participants, { userId, nickname, joinedAt: Date.now() }],
+      };
+    }),
+  );
+}
+export function leaveEvent(eventId: string, userId: string) {
+  const all = read<import("@/types").CommunityEvent[]>(K_EVENTS, []);
+  write(
+    K_EVENTS,
+    all.map((e) =>
+      e.id === eventId
+        ? { ...e, participants: e.participants.filter((p) => p.userId !== userId) }
+        : e,
+    ),
+  );
+}
+
+// ----- Blocked users -----
+const K_BLOCK = "officelink:blocked";
+export function getBlockedUsers(userId: string): import("@/types").BlockedUser[] {
+  return read<import("@/types").BlockedUser[]>(K_BLOCK, []).filter((b) => b.blockerId === userId);
+}
+export function isBlocked(blockerId: string, blockedId: string): boolean {
+  return getBlockedUsers(blockerId).some((b) => b.blockedId === blockedId);
+}
+export function blockUser(blockerId: string, blockedId: string, blockedNickname: string) {
+  if (isBlocked(blockerId, blockedId)) return;
+  const all = read<import("@/types").BlockedUser[]>(K_BLOCK, []);
+  all.push({ blockerId, blockedId, blockedNickname, createdAt: Date.now() });
+  write(K_BLOCK, all);
+}
+export function unblockUser(blockerId: string, blockedId: string) {
+  const all = read<import("@/types").BlockedUser[]>(K_BLOCK, []);
+  write(
+    K_BLOCK,
+    all.filter((b) => !(b.blockerId === blockerId && b.blockedId === blockedId)),
+  );
+}
+
+// ----- Group rooms -----
+const K_GROUPS = "officelink:groups";
+const K_GROUP_MSGS = "officelink:groupMsgs";
+export function getGroupRooms(userId: string): import("@/types").GroupRoom[] {
+  return read<import("@/types").GroupRoom[]>(K_GROUPS, [])
+    .filter((r) => r.members.includes(userId))
+    .sort((a, b) => b.lastMessageAt - a.lastMessageAt);
+}
+export function getGroupRoom(id: string): import("@/types").GroupRoom | null {
+  return read<import("@/types").GroupRoom[]>(K_GROUPS, []).find((r) => r.id === id) ?? null;
+}
+export function addGroupRoom(r: import("@/types").GroupRoom) {
+  const all = read<import("@/types").GroupRoom[]>(K_GROUPS, []);
+  all.push(r);
+  write(K_GROUPS, all);
+}
+export function sendGroupMessage(msg: import("@/types").GroupMessage) {
+  const all = read<import("@/types").GroupMessage[]>(K_GROUP_MSGS, []);
+  all.push(msg);
+  write(K_GROUP_MSGS, all);
+  // Update lastMessage
+  const rooms = read<import("@/types").GroupRoom[]>(K_GROUPS, []);
+  write(
+    K_GROUPS,
+    rooms.map((r) =>
+      r.id === msg.roomId
+        ? { ...r, lastMessageAt: msg.createdAt, lastMessagePreview: msg.content.slice(0, 30) }
+        : r,
+    ),
+  );
+}
+export function getGroupMessages(roomId: string): import("@/types").GroupMessage[] {
+  return read<import("@/types").GroupMessage[]>(K_GROUP_MSGS, [])
+    .filter((m) => m.roomId === roomId)
+    .sort((a, b) => a.createdAt - b.createdAt);
+}

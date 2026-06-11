@@ -266,10 +266,45 @@ export default function ProfilePage() {
           <span className="text-gray-400">›</span>
         </button>
         <button
+          onClick={() => router.push("/notifications-log")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🔔 알림 로그 (PWA)</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
           onClick={() => router.push("/dm")}
           className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
         >
           <span>💬 쪽지함</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/groups")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>👥 그룹 채팅</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/events")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🎉 이벤트/모임</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/stays")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🌍 단기임대 (외국인)</span>
+          <span className="text-gray-400">›</span>
+        </button>
+        <button
+          onClick={() => router.push("/blocked")}
+          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+        >
+          <span>🚫 차단 사용자</span>
           <span className="text-gray-400">›</span>
         </button>
         <button

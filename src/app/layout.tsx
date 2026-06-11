@@ -1,45 +1,71 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
-import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { I18nProvider } from "@/components/I18nProvider";
+import { SWRegister } from "@/components/SWRegister";
 
 export const metadata: Metadata = {
-  title: {
-    default: "OFFICELINK · 1인가구 오피스텔 라이프 플랫폼",
-    template: "%s · OFFICELINK",
-  },
-  description: "오피스텔 리뷰, 임대인/관리소 평판, 생활 편의 서비스를 한 곳에서. 1인가구를 위한 스마트한 동네 라이프.",
-  keywords: ["오피스텔", "리뷰", "1인가구", "임대", "관리소", "편의서비스", "동네"],
-  authors: [{ name: "OFFICELINK Team" }],
-  openGraph: {
-    type: "website",
-    title: "OFFICELINK · 1인가구 오피스텔 라이프 플랫폼",
-    description: "오피스텔 리뷰, 임대인/관리소 평판, 생활 편의 서비스",
-    siteName: "OFFICELINK",
-  },
-  manifest: "/manifest.json",
-  themeColor: "#f59e0b",
+  title: "OFFICELINK — 1인가구 오피스텔 라이프",
+  description: "건물 리뷰 · 임대료 관리 · 이웃 커뮤니티 · 외국인 단기임대",
+  applicationName: "OFFICELINK",
+  keywords: ["오피스텔", "1인가구", "리뷰", "단기임대", "외국인", "officetel", "short-term"],
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "OFFICELINK",
+    startupImage: ["/icon-512.png"],
   },
-  robots: {
-    index: true,
-    follow: true,
+  formatDetection: { telephone: false, address: false, email: false },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "OFFICELINK",
+    "msapplication-TileColor": "#2a3548",
+    "msapplication-config": "/manifest.webmanifest",
+    "theme-color": "#2a3548",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#2a3548",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <head>
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#2a3548" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="OFFICELINK" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-startup-image" href="/icon-512.png" />
       </head>
-      <body>
-        <AppShell>{children}</AppShell>
-        <ServiceWorkerRegister />
+      <body className="bg-concrete-50 text-concrete-900">
+        <I18nProvider>
+          <AppShell>
+            {children}
+          </AppShell>
+        </I18nProvider>
+        <SWRegister />
+
       </body>
     </html>
   );

@@ -390,3 +390,93 @@ export interface NeighborhoodStats {
   totalReviews: number;
   topTags: string[];
 }
+
+// =============================================
+// v0.6 — 외국인 단기임대 / 이벤트 / 차단 / 그룹채팅
+// =============================================
+
+// 외국인 단기임대 (Short-term rental for foreigners)
+export type StaysFor = "monthly" | "weekly" | "daily" | "yearly";
+export type StaysLang = "ko" | "en" | "ja" | "zh";
+
+export interface ShortTermListing {
+  id: string;
+  hostId: string;
+  hostNickname: string;
+  buildingId: string;
+  buildingName: string;
+  unitNumber: string;
+  pricePerDay: number;
+  pricePerWeek: number;
+  pricePerMonth: number;
+  currency: "KRW" | "USD" | "JPY" | "CNY";
+  minStay: number; // 최소 며칠
+  maxStay?: number; // 최대 며칠
+  availableFrom: number;
+  availableTo?: number;
+  rooms: number; // 방 개수
+  bathrooms: number;
+  area: number; // ㎡
+  furnished: boolean;
+  utilities: boolean; // 공과금 포함
+  wifi: boolean;
+  kitchen: boolean;
+  washer: boolean;
+  ac: boolean;
+  heating: boolean;
+  // 다국어 호스트 가능 언어
+  hostLangs: StaysLang[];
+  description: { [K in StaysLang]?: string };
+  rules: { [K in StaysLang]?: string[] };
+  images?: string[];
+  views: number;
+  inquiries: number;
+  status: "open" | "closed";
+  createdAt: number;
+}
+
+// 이벤트/모임
+export type EventCategory = "meetup" | "party" | "sports" | "study" | "food" | "other";
+export interface CommunityEvent {
+  id: string;
+  hostId: string;
+  hostNickname: string;
+  title: string;
+  description: string;
+  category: EventCategory;
+  location: string; // 텍스트 위치
+  startsAt: number;
+  endsAt?: number;
+  maxParticipants: number;
+  participants: { userId: string; nickname: string; joinedAt: number }[];
+  createdAt: number;
+}
+
+// 차단
+export interface BlockedUser {
+  blockerId: string;
+  blockedId: string;
+  blockedNickname: string;
+  createdAt: number;
+}
+
+// 그룹 채팅
+export interface GroupRoom {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  members: string[]; // userId[]
+  createdAt: number;
+  lastMessageAt: number;
+  lastMessagePreview: string;
+}
+export interface GroupMessage {
+  id: string;
+  roomId: string;
+  authorId: string;
+  authorNickname: string;
+  authorRole: UserRole;
+  content: string;
+  createdAt: number;
+}
