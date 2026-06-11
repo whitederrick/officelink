@@ -20,6 +20,8 @@ import {
 import { RoleBadge } from "@/components/Badges";
 import { showToast } from "@/lib/toast";
 import { Lightbox } from "@/components/Lightbox";
+import { BottomSheet } from "@/components/BottomSheet";
+import { usePullToRefresh } from "@/lib/pullToRefresh";
 import type { Comment, Post } from "@/types";
 import { LoadingIntro } from "@/components/LoadingHouse";
 
@@ -44,6 +46,17 @@ export default function PostPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [lightbox, setLightbox] = useState<number>(-1);
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
+  const [showCommentSheet, setShowCommentSheet] = useState(false);
+
+  // Pull to refresh
+  const ptr = usePullToRefresh(async () => {
+    const p = getPost(params.id);
+    if (p) {
+      setPost(p);
+      setComments(getComments(p.id));
+      showToast({ kind: "success", title: "새로고침 완료" });
+    }
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -221,7 +234,17 @@ export default function PostPage() {
 
       {/* 댓글 */}
       <div className="px-4 py-3">
-        <div className="text-sm font-semibold mb-2">댓글 {comments.length}</div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-sm font-semibold">댓글 {comments.length}</div>
+          {comments.length > 3 && (
+            <button
+              onClick={() => setShowCommentSheet(true)}
+              className="text-[11px] text-warm-700 font-semibold"
+            >
+              전체 보기 ›
+            </button>
+          )}
+        </div>
         {comments.length === 0 ? (
           <div className="py-8 text-center text-xs text-gray-400">
             첫 댓글을 남겨보세요.
@@ -309,6 +332,38 @@ export default function PostPage() {
           onChange={setLightbox}
         />
       )}
+
+      {/* 댓글 전체 시트 */}
+      <BottomSheet
+        open={showCommentSheet}
+        onClose={() => setShowCommentSheet(false)}
+        title={`댓글 ${comments.length}`}
+        height="half"
+      >
+        {comments.length === 0 ? (
+          <div className="py-12 text-center text-sm text-concrete-400">
+            첫 댓글을 남겨보세요.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {comments.filter((c) => !c.parentId).map((c) => {
+              const replies = comments.filter((x) => x.parentId === c.id);
+              return (
+                <div key={c.id}>
+                  <CommentItem comment={c} onReply={() => { setReplyTo(c); setShowCommentSheet(false); }} />
+                  {replies.length > 0 && (
+                    <div className="ml-6 mt-2 pl-3 border-l-2 border-concrete-200 space-y-2">
+                      {replies.map((r) => (
+                        <CommentItem key={r.id} comment={r} onReply={() => { setReplyTo(c); setShowCommentSheet(false); }} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </BottomSheet>
     </div>
   );
 }

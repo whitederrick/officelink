@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getUser } from "@/lib/storage";
+import { getUser, hasLiked, isBookmarked, likePostOnce, unlikePost, toggleBookmark } from "@/lib/storage";
 import { RoleBadge } from "./Badges";
+import { SwipeableRow } from "./SwipeableRow";
+import { showToast } from "@/lib/toast";
 import type { Post } from "@/types";
 
 function timeAgo(ts: number) {
@@ -25,7 +27,7 @@ const CATEGORY_COLOR: Record<string, string> = {
   질문: "bg-indigo-50 text-indigo-700",
 };
 
-export function PostCard({ post, channelTitle, showDM = true }: { post: Post; channelTitle?: string; showDM?: boolean }) {
+export function PostCard({ post, channelTitle, showDM = true, swipeable = true }: { post: Post; channelTitle?: string; showDM?: boolean; swipeable?: boolean }) {
   const router = useRouter();
 
   const onDM = (e: React.MouseEvent) => {
@@ -40,10 +42,32 @@ export function PostCard({ post, channelTitle, showDM = true }: { post: Post; ch
     router.push(`/dm/${encodeURIComponent(post.authorId)}`);
   };
 
-  return (
+  const onSwipeLike = () => {
+    if (!hasLiked(post.id)) {
+      likePostOnce(post.id);
+      showToast({ kind: "success", title: "좋아요 ❤️" });
+    } else {
+      unlikePost(post.id);
+      showToast({ kind: "info", title: "좋아요 취소" });
+    }
+    setTimeout(() => window.location.reload(), 100);
+  };
+
+  const onSwipeSave = () => {
+    if (!isBookmarked(post.id)) {
+      toggleBookmark(post.id);
+      showToast({ kind: "success", title: "저장 ⭐" });
+    } else {
+      toggleBookmark(post.id);
+      showToast({ kind: "info", title: "저장 해제" });
+    }
+    setTimeout(() => window.location.reload(), 100);
+  };
+
+  const card = (
     <Link
       href={`/post/${post.id}`}
-      className="block bg-white border-b border-gray-100 px-4 py-3 active:bg-gray-50"
+      className="block bg-white border-b border-concrete-100 px-4 py-3 active:bg-concrete-50"
     >
       {channelTitle && (
         <div className="text-[11px] text-gray-400 mb-1.5">{channelTitle}</div>
@@ -97,5 +121,18 @@ export function PostCard({ post, channelTitle, showDM = true }: { post: Post; ch
         <span>👁 {post.views}</span>
       </div>
     </Link>
+  );
+
+  if (!swipeable) return card;
+
+  return (
+    <SwipeableRow
+      onSwipeLeft={onSwipeLike}
+      onSwipeRight={onSwipeSave}
+      leftLabel="👍 좋아요"
+      rightLabel="⭐ 저장"
+    >
+      {card}
+    </SwipeableRow>
   );
 }

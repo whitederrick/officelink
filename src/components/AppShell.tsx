@@ -8,6 +8,7 @@ import { runSeedIfNeeded, runSeedV3IfNeeded } from "@/lib/seed";
 import { modeForRole, MODE_INFO } from "@/lib/display";
 import { LoadingIntro } from "./LoadingHouse";
 import { ToastHost } from "./ToastHost";
+import { InstallBanner } from "./InstallBanner";
 import type { User } from "@/types";
 
 const TABS = [
@@ -102,6 +103,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {ready ? children : <LoadingIntro />}
       </main>
       <ToastHost />
+      <InstallBanner />
 
       {!isOnboarding && ready && user && (
         <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur border-t border-concrete-200">
