@@ -46,9 +46,9 @@ const quickActions: {
 ];
 
 const buildingSkins = [
-  "from-zinc-950 via-slate-900 to-slate-700",
-  "from-stone-900 via-zinc-800 to-neutral-600",
-  "from-slate-800 via-slate-700 to-zinc-500",
+  "from-[#172033] via-[#25324a] to-[#4a5568]",
+  "from-[#25312b] via-[#405046] to-[#6d776c]",
+  "from-[#2f3542] via-[#46505f] to-[#7a8491]",
 ];
 
 export default function HomePage() {
@@ -125,24 +125,24 @@ export default function HomePage() {
   const { user, primaryAddress, hotBuildings, hotPosts, myChannels, channelStatus, channelMap } = data;
 
   return (
-    <div className="min-h-screen bg-[#f6f6f3] pb-6 text-zinc-950">
-      <section className="border-b border-zinc-200/80 bg-[#f8f8f5]">
+    <div className="min-h-screen bg-[#eef2ed] pb-6 text-[#172033]">
+      <section className="border-b border-[#dfe5dd] bg-[#fbfbf8]">
         <div className="mx-auto w-full max-w-6xl px-4 pb-6 pt-5 min-[390px]:px-5 md:px-8 md:pb-8 md:pt-8">
           <div className="mb-5 flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+              <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#657269]">
                 {primaryAddress ? `${primaryAddress.dong} 기준` : "OFFICELINK"}
               </p>
-              <h1 className="max-w-[560px] text-[28px] font-semibold leading-[1.08] tracking-[-0.06em] text-zinc-950 min-[390px]:text-[31px] md:text-[44px]">
+              <h1 className="max-w-[620px] text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#172033] min-[390px]:text-[34px] md:text-[46px]">
                 오늘 필요한 동네 정보를 간결하게 확인하세요.
               </h1>
-              <p className="mt-3 text-[13px] leading-5 text-zinc-500 md:text-sm">
+              <p className="mt-3 text-[14px] leading-6 text-[#657269] md:text-[15px]">
                 {user.nickname}님에게 맞춘 건물 리뷰, 생활 서비스, 커뮤니티 소식입니다.
               </p>
             </div>
             <Link
               href="/profile"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-950 text-sm font-semibold text-white shadow-sm"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#cfd8cf] bg-[#172033] text-sm font-semibold text-white shadow-sm"
             >
               {user.nickname.slice(0, 1)}
             </Link>
@@ -150,11 +150,11 @@ export default function HomePage() {
 
           <Link
             href="/search"
-            className="flex h-[52px] items-center gap-3 rounded-full border border-zinc-200 bg-white px-4 text-sm text-zinc-500 shadow-[0_10px_30px_rgba(24,24,27,0.04)] transition active:scale-[0.99]"
+            className="flex h-[54px] items-center gap-3 rounded-full border border-[#dfe5dd] bg-white px-4 text-[15px] text-[#657269] shadow-[0_10px_30px_rgba(23,32,51,0.05)] transition active:scale-[0.99]"
           >
-            <Icon name="search" className="h-5 w-5 text-zinc-400" />
+            <Icon name="search" className="h-5 w-5 text-[#7b877f]" />
             <span className="min-w-0 flex-1 truncate">건물, 동네, 생활 서비스를 검색하세요</span>
-            <span className="hidden rounded-full bg-zinc-100 px-3 py-1 text-[10px] font-semibold text-zinc-500 min-[390px]:block">
+            <span className="hidden rounded-full bg-[#eef2ed] px-3 py-1 text-[12px] font-semibold text-[#657269] min-[390px]:block">
               검색
             </span>
           </Link>
@@ -167,16 +167,16 @@ export default function HomePage() {
             <Link
               key={action.href}
               href={action.href}
-              className="group flex min-h-[88px] flex-col justify-between rounded-[22px] border border-zinc-200 bg-white p-3 shadow-[0_8px_24px_rgba(24,24,27,0.04)] transition hover:-translate-y-0.5 hover:border-zinc-300 active:scale-[0.98] md:min-h-[100px] md:p-4"
+              className="group flex min-h-[96px] flex-col justify-between rounded-[22px] border border-[#dfe5dd] bg-white p-3.5 shadow-[0_8px_24px_rgba(23,32,51,0.045)] transition hover:-translate-y-0.5 hover:border-[#cfd8cf] active:scale-[0.98] md:min-h-[108px] md:p-4"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-100 text-zinc-800 transition group-hover:bg-zinc-950 group-hover:text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eef2ed] text-[#25324a] transition group-hover:bg-[#172033] group-hover:text-white">
                 <Icon name={action.icon} className="h-4.5 w-4.5" />
               </span>
               <span>
-                <span className="block text-[13px] font-semibold tracking-[-0.03em] text-zinc-950">
+                <span className="block text-[14px] font-semibold tracking-[-0.03em] text-[#172033]">
                   {action.label}
                 </span>
-                <span className="mt-0.5 block text-[10px] text-zinc-500">{action.description}</span>
+                <span className="mt-1 block text-[12px] text-[#657269]">{action.description}</span>
               </span>
             </Link>
           ))}
@@ -190,30 +190,30 @@ export default function HomePage() {
             <Link
               key={building.id}
               href={`/building/${building.id}`}
-              className="w-[36vw] min-w-[128px] max-w-[154px] shrink-0 overflow-hidden rounded-[22px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,24,27,0.05)] md:w-auto md:max-w-none"
+              className="w-[36vw] min-w-[132px] max-w-[160px] shrink-0 overflow-hidden rounded-[22px] border border-[#dfe5dd] bg-white shadow-[0_10px_28px_rgba(23,32,51,0.055)] md:w-auto md:max-w-none"
             >
               <div className={`relative h-20 bg-gradient-to-br p-3 ${buildingSkins[index % buildingSkins.length]}`}>
                 <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full border border-white/10" />
-                <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-medium text-white/85 backdrop-blur">
+                <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white/85 backdrop-blur">
                   <Icon name="mapPin" className="h-3 w-3" />
                   {building.dong}
                 </span>
                 <div className="absolute bottom-3 left-3 right-3">
-                  <p className="line-clamp-2 text-[13px] font-semibold leading-tight tracking-[-0.03em] text-white">
+                  <p className="line-clamp-2 text-[14px] font-semibold leading-tight tracking-[-0.03em] text-white">
                     {building.name}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between p-3">
                 <div>
-                  <p className="text-[9px] text-zinc-400">{building.sigungu}</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-zinc-600">
+                  <p className="text-[11px] text-[#7b877f]">{building.sigungu}</p>
+                  <p className="mt-0.5 text-[12px] font-medium text-[#657269]">
                     리뷰 {building.ratingCount}개
                   </p>
                 </div>
-                <div className="flex items-center gap-0.5 rounded-full bg-zinc-100 px-1.5 py-1 text-zinc-700">
+                <div className="flex items-center gap-0.5 rounded-full bg-[#eef2ed] px-2 py-1 text-[#25324a]">
                   <Icon name="star" className="h-3 w-3 fill-current" />
-                  <span className="text-[11px] font-semibold">{building.ratingAvg.toFixed(1)}</span>
+                  <span className="text-[12px] font-semibold">{building.ratingAvg.toFixed(1)}</span>
                 </div>
               </div>
             </Link>
@@ -222,20 +222,20 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 pt-5 min-[390px]:px-5 md:px-8">
-        <div className="relative overflow-hidden rounded-[24px] border border-zinc-800 bg-zinc-950 p-4 text-white shadow-[0_18px_45px_rgba(24,24,27,0.16)] md:p-5">
+        <div className="relative overflow-hidden rounded-[24px] border border-[#25324a] bg-[#172033] p-4 text-white shadow-[0_18px_45px_rgba(23,32,51,0.18)] md:p-5">
           <div className="absolute -right-14 -top-16 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
           <div className="relative flex items-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10">
               <Icon name="globe" className="h-5 w-5 text-zinc-200" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Stay in Seoul</p>
-              <h2 className="mt-0.5 text-[15px] font-semibold tracking-[-0.03em]">언어가 통하는 단기 거주</h2>
-              <p className="mt-1 truncate text-[10px] text-zinc-400">출장, 유학, 워홀을 위한 가구 완비 공간</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Stay in Seoul</p>
+              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.03em]">언어가 통하는 단기 거주</h2>
+              <p className="mt-1 truncate text-[12px] text-white/60">출장, 유학, 워홀을 위한 가구 완비 공간</p>
             </div>
             <Link
               href="/stays"
-              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-[10px] font-semibold text-zinc-950"
+              className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-white px-3.5 text-[12px] font-semibold text-[#172033]"
             >
               둘러보기
               <Icon name="arrowRight" className="h-3.5 w-3.5" />
@@ -254,10 +254,10 @@ export default function HomePage() {
                 <Link
                   key={channel.id}
                   href={`/channel/${channel.id}`}
-                  className="rounded-[22px] border border-zinc-200 bg-white p-3 shadow-[0_8px_24px_rgba(24,24,27,0.04)] transition hover:border-zinc-300 active:scale-[0.98]"
+                  className="rounded-[22px] border border-[#dfe5dd] bg-white p-3.5 shadow-[0_8px_24px_rgba(23,32,51,0.045)] transition hover:border-[#cfd8cf] active:scale-[0.98]"
                 >
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-800">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef2ed] text-[#25324a]">
                       <Icon
                         name={channel.kind.includes("building") ? "building" : "users"}
                         className="h-[17px] w-[17px]"
@@ -266,17 +266,17 @@ export default function HomePage() {
                     <span
                       className={`rounded-full border px-2 py-1 text-[9px] font-semibold ${
                         status === "거주 중"
-                          ? "border-zinc-900 bg-zinc-950 text-white"
-                          : "border-zinc-200 bg-zinc-50 text-zinc-500"
+                          ? "border-[#172033] bg-[#172033] text-white"
+                          : "border-[#dfe5dd] bg-[#fbfbf8] text-[#657269]"
                       }`}
                     >
                       {status}
                     </span>
                   </div>
-                  <p className="line-clamp-2 text-[13px] font-semibold leading-snug tracking-[-0.02em] text-zinc-950">
+                  <p className="line-clamp-2 text-[14px] font-semibold leading-snug tracking-[-0.02em] text-[#172033]">
                     {channel.title}
                   </p>
-                  <p className="mt-1 text-[9px] text-zinc-400">
+                  <p className="mt-1 text-[12px] text-[#7b877f]">
                     {channel.kind.includes("building") ? "건물 채널" : "지역 채널"}
                   </p>
                 </Link>
@@ -288,7 +288,7 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-6xl px-4 pb-5 pt-7 min-[390px]:px-5 md:px-8">
         <SectionTitle title="지금 이웃들의 이야기" href="/feed" />
-        <div className="overflow-hidden rounded-[24px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,24,27,0.04)] md:grid md:grid-cols-3">
+        <div className="overflow-hidden rounded-[24px] border border-[#dfe5dd] bg-white shadow-[0_10px_28px_rgba(23,32,51,0.045)] md:grid md:grid-cols-3">
           {hotPosts.map((post, index) => (
             <Link
               key={post.id}
@@ -298,17 +298,17 @@ export default function HomePage() {
               }`}
             >
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-600">
+                <span className="rounded-full bg-[#eef2ed] px-2.5 py-1 text-[12px] font-semibold text-[#657269]">
                   {post.category}
                 </span>
-                <span className="truncate text-[10px] text-zinc-400">
+                <span className="truncate text-[12px] text-[#7b877f]">
                   {channelMap.get(post.channelId)?.title}
                 </span>
               </div>
-              <p className="line-clamp-1 text-sm font-semibold tracking-[-0.02em] text-zinc-950">
+              <p className="line-clamp-1 text-[15px] font-semibold tracking-[-0.02em] text-[#172033]">
                 {post.title}
               </p>
-              <div className="mt-2 flex items-center gap-3 text-[10px] text-zinc-400">
+              <div className="mt-2 flex items-center gap-3 text-[12px] text-[#7b877f]">
                 <span>{post.authorNickname}</span>
                 <span>좋아요 {post.likes}</span>
                 <span>댓글 {post.commentCount}</span>
@@ -324,8 +324,8 @@ export default function HomePage() {
 function SectionTitle({ title, href }: { title: string; href: string }) {
   return (
     <div className="mb-2.5 flex items-center justify-between">
-      <h2 className="text-[17px] font-semibold tracking-[-0.04em] text-zinc-950">{title}</h2>
-      <Link href={href} className="flex items-center gap-1 text-[11px] font-medium text-zinc-400">
+      <h2 className="text-[19px] font-semibold tracking-[-0.04em] text-[#172033]">{title}</h2>
+      <Link href={href} className="flex items-center gap-1 text-[13px] font-medium text-[#657269]">
         전체 보기
         <Icon name="arrowRight" className="h-3.5 w-3.5" />
       </Link>

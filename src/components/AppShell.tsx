@@ -43,13 +43,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell flex flex-col">
       {!isOnboarding && (
-        <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-[#f8f8f5]/90 backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-[#dfe5dd] bg-[#fbfbf8]/90 backdrop-blur-xl">
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 min-[390px]:px-5 md:px-8">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-white shadow-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#172033] text-white shadow-sm">
                 <Icon name="building" className="h-4 w-4" />
               </div>
-              <span className="text-[14px] font-semibold tracking-[-0.03em] text-zinc-950 min-[390px]:text-[15px]">
+              <span className="text-[15px] font-semibold tracking-[-0.03em] text-[#172033] min-[390px]:text-[16px]">
                 OFFICELINK
               </span>
             </Link>
@@ -60,18 +60,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     href="/search"
                     aria-label="검색"
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-600 hover:bg-zinc-100"
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-[#4d5b68] hover:bg-[#eef2ed]"
                   >
                     <Icon name="search" className="h-[19px] w-[19px]" />
                   </Link>
                   <Link
                     href="/notifications"
                     aria-label="알림"
-                    className="relative flex h-9 w-9 items-center justify-center rounded-full text-zinc-600 hover:bg-zinc-100"
+                    className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#4d5b68] hover:bg-[#eef2ed]"
                   >
                     <Icon name="bell" className="h-[19px] w-[19px]" />
                     {unread > 0 && (
-                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-zinc-950 px-1 text-[9px] font-semibold text-white">
+                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#172033] px-1 text-[10px] font-semibold text-white">
                         {unread > 9 ? "9+" : unread}
                       </span>
                     )}
@@ -79,7 +79,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     href="/dm"
                     aria-label="쪽지"
-                    className="hidden h-9 w-9 items-center justify-center rounded-full text-zinc-600 hover:bg-zinc-100 min-[390px]:flex"
+                    className="hidden h-9 w-9 items-center justify-center rounded-full text-[#4d5b68] hover:bg-[#eef2ed] min-[390px]:flex"
                   >
                     <Icon name="message" className="h-[19px] w-[19px]" />
                   </Link>
@@ -88,12 +88,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
               {ready && user ? (
                 <Link href="/profile" className="ml-1 flex items-center">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-300 bg-white text-xs font-semibold text-zinc-950">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#cfd8cf] bg-white text-[13px] font-semibold text-[#172033]">
                     {user.nickname.slice(0, 1)}
                   </span>
                 </Link>
               ) : (
-                <Link href="/onboarding" className="text-xs font-semibold text-zinc-900">
+                <Link href="/onboarding" className="text-[13px] font-semibold text-[#172033]">
                   시작하기
                 </Link>
               )}
@@ -113,7 +113,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <InstallBanner />
 
       {!isOnboarding && ready && user && (
-        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200/80 bg-[#f8f8f5]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#dfe5dd] bg-[#fbfbf8]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
           <div className="mx-auto flex h-[68px] w-full max-w-6xl px-3 md:px-8">
             {TABS.map((tab) => {
               const active =
@@ -122,8 +122,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`relative flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold transition ${
-                    active ? "text-zinc-950" : "text-zinc-400"
+                  className={`relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition ${
+                    active ? "text-[#172033]" : "text-[#7b877f]"
                   }`}
                 >
                   <Icon
@@ -133,7 +133,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   />
                   <span>{tab.label}</span>
                   {active && (
-                    <span className="absolute top-1.5 h-1 w-1 rounded-full bg-zinc-950" />
+                    <span className="absolute top-1.5 h-1 w-1 rounded-full bg-[#172033]" />
                   )}
                 </Link>
               );
