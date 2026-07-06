@@ -1,0 +1,40 @@
+# OFFICELINK 로컬 실행 / DB 준비.
+#
+# 지금(파일 저장소)은 docker 없이도 `npm run dev` 로 동작한다.
+# 이 compose 는 두 가지 용도:
+#   1) app  — 컨테이너로 앱 전체를 띄우고 싶을 때:   docker compose up app
+#   2) db   — 나중에 Postgres 로 전환할 때 미리 준비:  docker compose up -d db
+#
+# 실 DB 전환 전까지 db 서비스는 켜지 않아도 된다.
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - OFFICELINK_DATA_DIR=/app/.data
+      # 실 DB 전환 시 주석 해제:
+      # - DATABASE_URL=postgres://officelink:officelink@db:5432/officelink
+    volumes:
+      - officelink_data:/app/.data
+    # depends_on:
+    #   - db
+
+  # 미래 Postgres (지금은 미사용). `docker compose up -d db` 로만 띄움.
+  db:
+    image: postgres:16-alpine
+    profiles: ["db"]
+    environment:
+      - POSTGRES_USER=officelink
+      - POSTGRES_PASSWORD=officelink
+      - POSTGRES_DB=officelink
+    ports:
+      - "5432:5432"
+    volumes:
+      - officelink_pg:/var/lib/postgresql/data
+
+volumes:
+  officelink_data:
+  officelink_pg:

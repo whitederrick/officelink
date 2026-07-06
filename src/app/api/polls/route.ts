@@ -1,38 +1,51 @@
-import { NextResponse } from "next/server";
-import { getPolls, addPoll, getUser, uid } from "@/lib/storage";
-import { getPolls as fetchPolls } from "@/lib/storage";
+import { ensureSeeded } from "@/server/seed.server";
+import { listPolls, polls, uid } from "@/server/repo";
+import { currentUser } from "@/server/session";
+import { ok, fail, readJson } from "@/server/http";
 import type { Poll } from "@/types";
 
-/**
- * GET /api/polls?buildingId=xxx
- * POST /api/polls  body: { question, options[], multiple, buildingId? }
- */
+export const dynamic = "force-dynamic";
+
+/** GET /api/polls?buildingId=&channelId=&postId= */
 export async function GET(req: Request) {
+  ensureSeeded();
   const url = new URL(req.url);
-  const buildingId = url.searchParams.get("buildingId") || undefined;
-  const list = getPolls({ buildingId });
-  return NextResponse.json({ ok: true, count: list.length, data: list });
+  const list = listPolls({
+    buildingId: url.searchParams.get("buildingId") || undefined,
+    channelId: url.searchParams.get("channelId") || undefined,
+    postId: url.searchParams.get("postId") || undefined,
+  });
+  return ok(list, { count: list.length });
 }
 
+/** POST /api/polls  body: { question, options[], multiple?, buildingId?, channelId?, postId? } */
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const me = getUser();
-    if (!me) {
-      return NextResponse.json({ ok: false, error: "로그인이 필요해요" }, { status: 401 });
-    }
-    const poll: Poll = {
-      id: uid(),
-      question: body.question,
-      options: (body.options || []).map((text: string) => ({ id: uid(), text, votes: 0 })),
-      voters: [],
-      multiple: !!body.multiple,
-      buildingId: body.buildingId,
-      createdAt: Date.now(),
-    };
-    addPoll(poll);
-    return NextResponse.json({ ok: true, data: poll }, { status: 201 });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
-  }
+  ensureSeeded();
+  const me = currentUser();
+  if (!me) return fail("로그인이 필요해요", 401);
+
+  const body = await readJson<{
+    question?: string;
+    options?: string[];
+    multiple?: boolean;
+    buildingId?: string;
+    channelId?: string;
+    postId?: string;
+  }>(req);
+  if (!body?.question || !Array.isArray(body.options) || body.options.length < 2)
+    return fail("질문과 2개 이상의 보기를 입력해 주세요");
+
+  const poll: Poll = {
+    id: uid(),
+    question: body.question,
+    options: body.options.map((text) => ({ id: uid(), text, votes: 0 })),
+    voters: [],
+    multiple: !!body.multiple,
+    buildingId: body.buildingId,
+    channelId: body.channelId,
+    postId: body.postId,
+    createdAt: Date.now(),
+  };
+  polls.insert(poll);
+  return ok(poll, { status: 201 });
 }

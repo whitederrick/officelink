@@ -480,3 +480,45 @@ export interface GroupMessage {
   content: string;
   createdAt: number;
 }
+
+// =============================================
+// 백엔드 도메인 — 관계(Relationship) 모델
+// (PPTX 기획: 임차인↔임대인 / 임차인↔관리인 / 임대인↔관리인)
+// =============================================
+
+// 관계 종류. 두 역할 쌍을 정렬된 형태로 표현.
+export type RelationshipKind =
+  | "tenant-landlord"
+  | "tenant-manager"
+  | "landlord-manager";
+
+// 관계 상태: 신청 → 수락(활성) → 종료
+export type RelationshipStatus = "requested" | "active" | "ended";
+
+// 두 사용자 간 관계. 같은 상세주소(오피스텔)를 기준으로 연결된다.
+export interface Relationship {
+  id: string;
+  kind: RelationshipKind;
+  // 신청한 쪽 / 받는 쪽
+  requesterId: string;
+  requesterRole: UserRole;
+  addresseeId: string;
+  addresseeRole: UserRole;
+  // 매칭 기준이 된 오피스텔 상세주소 (scopeKey 의 building 부분)
+  buildingScope: string;
+  buildingLabel: string;
+  status: RelationshipStatus;
+  // 관계 전용 연계 채널 (수락 시 생성)
+  channelId?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// 인증 응답에 쓰이는 공개 사용자 정보 (비밀번호 등 제외)
+export interface PublicUser {
+  id: string;
+  nickname: string;
+  role: UserRole;
+  email?: string;
+  createdAt: number;
+}

@@ -14,6 +14,7 @@ import {
   uid,
   deleteBuildingNotice,
 } from "@/lib/storage";
+import { canAccessRole, roleHome } from "@/lib/access";
 import { calcBuildingStats } from "@/lib/stats";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
@@ -42,6 +43,10 @@ export default function ManagerDashboardPage() {
     const u = getUser();
     if (!u) {
       router.replace("/onboarding");
+      return;
+    }
+    if (!canAccessRole(u.role, ["manager"])) {
+      router.replace(roleHome(u.role));
       return;
     }
     const profile = getProfileByName("manager", "상암오벨리스크 관리사무소");

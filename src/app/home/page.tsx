@@ -74,8 +74,8 @@ export default function MyHomePage() {
         <div className="grid grid-cols-4 gap-2">
           {[
             { emoji: "🔧", label: "AS 신청", href: "/as-request" },
-            { emoji: "📦", label: "택배", href: "#" },
-            { emoji: "💰", label: "관리비", href: "#" },
+            { emoji: "📢", label: "건물 공지", href: "/notices" },
+            { emoji: "🎉", label: "이웃 모임", href: "/events" },
             { emoji: "✍️", label: "리뷰", href: "/review/write" },
           ].map((a) => (
             <Link

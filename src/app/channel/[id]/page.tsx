@@ -35,7 +35,7 @@ export default function ChannelPage() {
   const posts = useMemo(() => {
     if (!channel) return [];
     return getPostsByChannel(channel.id);
-  }, [channel, mounted]);
+  }, [channel]);
 
   if (!mounted || !channel) {
     return <LoadingIntro />;

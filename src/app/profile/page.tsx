@@ -356,27 +356,42 @@ export default function ProfilePage() {
           <span>🏘 동네별 통계</span>
           <span className="text-gray-400">›</span>
         </button>
-        <button
-          onClick={() => router.push("/fees")}
-          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
-        >
-          <span>💰 관리비</span>
-          <span className="text-gray-400">›</span>
-        </button>
-        <button
-          onClick={() => router.push("/landlord-dashboard")}
-          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
-        >
-          <span>🏢 임대인 대시보드</span>
-          <span className="text-gray-400">›</span>
-        </button>
-        <button
-          onClick={() => router.push("/manager-dashboard")}
-          className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
-        >
-          <span>🔧 관리소 대시보드</span>
-          <span className="text-gray-400">›</span>
-        </button>
+        {user.role === "landlord" && (
+          <>
+            <button
+              onClick={() => router.push("/rent")}
+              className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+            >
+              <span>💵 임대료 수령 관리</span>
+              <span className="text-gray-400">›</span>
+            </button>
+            <button
+              onClick={() => router.push("/landlord-dashboard")}
+              className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+            >
+              <span>🏢 임대인 대시보드</span>
+              <span className="text-gray-400">›</span>
+            </button>
+          </>
+        )}
+        {user.role === "manager" && (
+          <>
+            <button
+              onClick={() => router.push("/fees")}
+              className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+            >
+              <span>💰 관리비 입력</span>
+              <span className="text-gray-400">›</span>
+            </button>
+            <button
+              onClick={() => router.push("/manager-dashboard")}
+              className="w-full flex items-center justify-between px-3 h-11 border border-gray-200 rounded-lg text-sm active:bg-gray-50"
+            >
+              <span>🔧 관리소 대시보드</span>
+              <span className="text-gray-400">›</span>
+            </button>
+          </>
+        )}
       </section>
 
       {/* 설정 */}
@@ -388,7 +403,7 @@ export default function ProfilePage() {
           🗑️ 모든 데이터 초기화
         </button>
         <div className="text-[11px] text-gray-400 text-center pt-2">
-          OFFICELINK MVP · v0.1 · localStorage 기반
+          OFFICELINK MVP · v0.6 · localStorage 기반
         </div>
       </section>
     </div>

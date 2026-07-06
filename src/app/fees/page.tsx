@@ -9,6 +9,7 @@ import {
   getUser,
   uid,
 } from "@/lib/storage";
+import { canAccessRole, roleHome } from "@/lib/access";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
 import { Button } from "@/components/Button";
@@ -30,8 +31,13 @@ export default function FeesPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (!getUser()) {
+    const user = getUser();
+    if (!user) {
       router.replace("/onboarding");
+      return;
+    }
+    if (!canAccessRole(user.role, ["manager"])) {
+      router.replace(roleHome(user.role));
       return;
     }
     const bs = getBuildings();

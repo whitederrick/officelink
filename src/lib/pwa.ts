@@ -17,6 +17,19 @@ export type SyncAction =
 export async function registerSW(): Promise<ServiceWorkerRegistration | null> {
   if (typeof window === "undefined") return null;
   if (!("serviceWorker" in navigator)) return null;
+  if (process.env.NODE_ENV !== "production") {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter((key) => key.startsWith("officelink-"))
+          .map((key) => caches.delete(key)),
+      );
+    }
+    return null;
+  }
   try {
     const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
     return reg;

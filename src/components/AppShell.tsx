@@ -9,14 +9,15 @@ import { modeForRole, MODE_INFO } from "@/lib/display";
 import { LoadingIntro } from "./LoadingHouse";
 import { ToastHost } from "./ToastHost";
 import { InstallBanner } from "./InstallBanner";
+import { Icon, type IconName } from "./Icon";
 import type { User } from "@/types";
 
 const TABS = [
-  { href: "/", label: "홈", icon: "🏠" },
-  { href: "/feed", label: "피드", icon: "📰" },
-  { href: "/services", label: "서비스", icon: "🛎" },
-  { href: "/profile", label: "내정보", icon: "👤" },
-];
+  { href: "/", label: "홈", icon: "home" },
+  { href: "/feed", label: "피드", icon: "feed" },
+  { href: "/services", label: "서비스", icon: "services" },
+  { href: "/profile", label: "내정보", icon: "user" },
+] satisfies { href: string; label: string; icon: IconName }[];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -44,44 +45,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell flex flex-col">
       {!isOnboarding && (
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-concrete-200">
-          <div className="flex items-center justify-between px-4 h-12">
-            <Link href="/" className="font-bold text-base tracking-tight flex items-center gap-1.5">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-warm-500 to-warm-600 flex items-center justify-center text-white text-[11px] font-bold">
-                OL
+        <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 min-[390px]:px-5 md:px-8">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm">
+                <Icon name="building" className="h-4 w-4" />
               </div>
-              <span className="text-concrete-900">OFFICELINK</span>
+              <span className="text-[14px] font-extrabold tracking-[-0.03em] text-slate-950 min-[390px]:text-[15px]">OFFICELINK</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
               {ready && user && (
                 <>
-                  <Link href="/search" aria-label="검색" className="text-base text-concrete-600 active:text-warm-500">
-                    🔍
+                  <Link href="/search" aria-label="검색" className="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100">
+                    <Icon name="search" className="h-[19px] w-[19px]" />
                   </Link>
-                  <Link href="/notifications" aria-label="알림" className="relative text-base text-concrete-600">
-                    🔔
+                  <Link href="/notifications" aria-label="알림" className="relative flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100">
+                    <Icon name="bell" className="h-[19px] w-[19px]" />
                     {unread > 0 && (
-                      <span className="absolute -top-1 -right-2 min-w-[16px] h-[16px] px-1 rounded-full bg-coral-500 text-white text-[9px] font-bold flex items-center justify-center">
+                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-1 text-[9px] font-bold text-white">
                         {unread > 9 ? "9+" : unread}
                       </span>
                     )}
                   </Link>
-                  <Link href="/dm" aria-label="쪽지" className="text-base text-concrete-600">
-                    💬
+                  <Link href="/dm" aria-label="쪽지" className="hidden h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 min-[390px]:flex">
+                    <Icon name="message" className="h-[19px] w-[19px]" />
                   </Link>
                 </>
               )}
               {ready && user ? (
                 <Link
                   href="/profile"
-                  className="text-xs text-concrete-500 hover:text-concrete-900 flex items-center gap-1"
+                  className="ml-1 flex items-center"
                 >
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                    user.role === "tenant" ? "bg-warm-50 text-warm-700" :
-                    user.role === "landlord" ? "bg-ink-50 text-ink-700" :
-                    "bg-sage-50 text-sage-700"
-                  }`}>
-                    {MODE_INFO[modeForRole(user.role)].label}
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                    {user.nickname.slice(0, 1)}
                   </span>
                 </Link>
               ) : (
@@ -106,8 +103,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <InstallBanner />
 
       {!isOnboarding && ready && user && (
-        <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur border-t border-concrete-200">
-          <div className="app-shell flex">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200/70 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+          <div className="mx-auto flex h-[68px] w-full max-w-6xl px-3 md:px-8">
             {TABS.map((t) => {
               const active =
                 t.href === "/"
@@ -117,14 +114,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={t.href}
                   href={t.href}
-                  className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] transition ${
+                  className={`relative flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold transition ${
                     active
-                      ? "text-warm-600 font-semibold"
-                      : "text-concrete-500"
+                      ? "text-indigo-600"
+                      : "text-slate-400"
                   }`}
                 >
-                  <span className={`text-xl leading-none ${active ? "" : ""}`}>{t.icon}</span>
+                  <Icon name={t.icon} className="h-[21px] w-[21px]" strokeWidth={active ? 2.2 : 1.8} />
                   <span>{t.label}</span>
+                  {active && <span className="absolute top-1.5 h-1 w-1 rounded-full bg-indigo-600" />}
                 </Link>
               );
             })}

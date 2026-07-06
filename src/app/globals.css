@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: light;
-  --bg-base: #f8f9fb;
+  --bg-base: #f4f6fa;
   --bg-card: #ffffff;
   --border: #e5e8eb;
 }
@@ -19,22 +19,32 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* 모바일 우선: 최대 480px 폭 중앙 정렬 */
+/* 모바일 우선 반응형 앱 프레임 */
 .app-shell {
-  max-width: 480px;
+  width: 100%;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg-card);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
   position: relative;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .app-shell {
-    border-left: none;
-    border-right: none;
+    width: calc(100% - 48px);
+    max-width: 1180px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    border-radius: 24px;
+    overflow: clip;
+    box-shadow: 0 0 0 1px rgba(226, 232, 240, 0.8), 0 24px 80px rgba(15, 23, 42, 0.08);
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-shell {
+    width: calc(100% - 80px);
   }
 }
 

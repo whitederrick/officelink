@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
-import { getServices } from "@/lib/storage";
+import { ensureSeeded } from "@/server/seed.server";
+import { listServices } from "@/server/repo";
+import { ok } from "@/server/http";
 
-/**
- * GET /api/services?category=clean
- */
+export const dynamic = "force-dynamic";
+
+/** GET /api/services?category=clean */
 export async function GET(req: Request) {
+  ensureSeeded();
   const url = new URL(req.url);
   const category = url.searchParams.get("category") || undefined;
-  const list = getServices(category);
-  return NextResponse.json({ ok: true, count: list.length, data: list });
+  const list = listServices(category);
+  return ok(list, { count: list.length });
 }

@@ -29,3 +29,7 @@ next-env.d.ts
 # IDE
 .vscode/
 .idea/
+.claude/
+
+# 서버 파일 기반 저장소 (런타임 데이터)
+/.data/

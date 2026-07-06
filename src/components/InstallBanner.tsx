@@ -86,7 +86,7 @@ export function InstallBanner() {
   if (showIOSGuide) {
     return (
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-[440px]">
-        <div className="warm-card p-3 bg-ink-900 text-white shadow-2xl">
+        <div className="warm-card !bg-ink-900 p-3 text-white shadow-2xl">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-2xl">📱</span>
             <div className="flex-1">
@@ -110,7 +110,7 @@ export function InstallBanner() {
 
   return (
     <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-[440px]">
-      <div className="warm-card p-3 bg-ink-900 text-white shadow-2xl">
+      <div className="warm-card !bg-ink-900 p-3 text-white shadow-2xl">
         {!online && (
           <div className="text-[11px] text-coral-300 mb-2 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-coral-400 animate-pulse" />

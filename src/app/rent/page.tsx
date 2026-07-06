@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUser, uid } from "@/lib/storage";
+import { canAccessRole, roleHome } from "@/lib/access";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
 import { EmptyState } from "@/components/EmptyState";
@@ -55,8 +56,13 @@ export default function RentPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (!getUser()) {
+    const user = getUser();
+    if (!user) {
       router.replace("/onboarding");
+      return;
+    }
+    if (!canAccessRole(user.role, ["landlord"])) {
+      router.replace(roleHome(user.role));
       return;
     }
     reload();

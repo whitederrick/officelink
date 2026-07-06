@@ -10,12 +10,45 @@ import {
   getPosts,
   getUser,
 } from "@/lib/storage";
-import { PostCard } from "@/components/PostCard";
-import { RoleBadge } from "@/components/Badges";
-import type { Channel, Post, UserRole } from "@/types";
+import { Icon, type IconName } from "@/components/Icon";
 import { LoadingIntro } from "@/components/LoadingHouse";
 
-const PUBLIC_KINDS: Channel["kind"][] = ["public"];
+const quickActions: {
+  href: string;
+  icon: IconName;
+  label: string;
+  description: string;
+  className: string;
+}[] = [
+  {
+    href: "/buildings",
+    icon: "building",
+    label: "건물 찾기",
+    description: "실거주 리뷰",
+    className: "bg-indigo-50 text-indigo-600",
+  },
+  {
+    href: "/stays",
+    icon: "globe",
+    label: "단기 거주",
+    description: "다국어 매물",
+    className: "bg-cyan-50 text-cyan-600",
+  },
+  {
+    href: "/review/write",
+    icon: "pen",
+    label: "리뷰 작성",
+    description: "경험 공유",
+    className: "bg-violet-50 text-violet-600",
+  },
+  {
+    href: "/events",
+    icon: "calendar",
+    label: "동네 모임",
+    description: "새로운 연결",
+    className: "bg-rose-50 text-rose-600",
+  },
+];
 
 export default function HomePage() {
   const router = useRouter();
@@ -35,194 +68,264 @@ export default function HomePage() {
     const allChannels = getChannels();
     const allPosts = getPosts();
     const allBuildings = getBuildings();
-    const hotBuildings = allBuildings
-      .filter((b: any) => b.ratingCount > 0)
-      .sort((a: any, b: any) => b.ratingAvg - a.ratingAvg)
+    const hotBuildings = [...allBuildings]
+      .filter((building) => building.ratingCount > 0)
+      .sort((a, b) => b.ratingAvg - a.ratingAvg)
+      .slice(0, 4);
+
+    const myScopes = new Set<string>();
+    for (const address of addresses) {
+      myScopes.add(`building:${address.detail}`);
+      myScopes.add(`region:${address.sigungu}:${address.dong}`);
+    }
+
+    const myChannels = allChannels.filter((channel) => myScopes.has(channel.scopeKey));
+    const primaryScopes = new Set<string>();
+    const primaryAddress = addresses.find((address) => address.isPrimary) ?? addresses[0];
+    if (primaryAddress) {
+      primaryScopes.add(`building:${primaryAddress.detail}`);
+      primaryScopes.add(`region:${primaryAddress.sigungu}:${primaryAddress.dong}`);
+    }
+    const channelStatus = new Map(
+      myChannels.map((channel) => [
+        channel.id,
+        user.role === "tenant"
+          ? primaryScopes.has(channel.scopeKey) ? "거주 중" : "관심 지역"
+          : "운영 중",
+      ]),
+    );
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const hotPosts = [...allPosts]
+      .filter((post) => post.createdAt >= cutoff)
+      .sort(
+        (a, b) =>
+          b.likes + b.commentCount * 2 + b.views * 0.1 -
+          (a.likes + a.commentCount * 2 + a.views * 0.1),
+      )
       .slice(0, 3);
 
-    // 내 채널 (오피스텔 + 지역) — 사용자가 가진 주소의 scope
-    const myScopes = new Set<string>();
-    for (const a of addresses) {
-      myScopes.add(`building:${a.detail}`);
-      myScopes.add(`region:${a.sigungu}:${a.dong}`);
-    }
-    const myChannels = allChannels.filter((c) => myScopes.has(c.scopeKey));
-
-    // 공용 채널
-    const publicChannels = allChannels.filter((c) => c.kind === "public");
-
-    // 인기 글 (likes + comment*2 + views 가중치, 최근 30일)
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-    const hot = [...allPosts]
-      .filter((p) => p.createdAt >= cutoff)
-      .sort((a, b) => {
-        const sa = a.likes + a.commentCount * 2 + a.views * 0.1;
-        const sb = b.likes + b.commentCount * 2 + b.views * 0.1;
-        return sb - sa;
-      })
-      .slice(0, 5);
-
-    return { user, myChannels, publicChannels, hot, allChannels, allBuildings, hotBuildings };
+    return {
+      user,
+      primaryAddress,
+      hotBuildings,
+      hotPosts,
+      myChannels,
+      channelStatus,
+      channelMap: new Map(allChannels.map((channel) => [channel.id, channel])),
+    };
   }, [mounted]);
 
-  if (!mounted || !data) {
-    return <LoadingIntro />;
-  }
+  if (!mounted || !data) return <LoadingIntro />;
 
-  const { user, myChannels, publicChannels, hot, allChannels, hotBuildings } = data;
-  const channelMap = new Map(allChannels.map((c) => [c.id, c]));
+  const { user, primaryAddress, hotBuildings, hotPosts, myChannels, channelStatus, channelMap } = data;
 
   return (
-    <div className="bg-white">
-      {/* 인사 */}
-      <div className="px-4 pt-4 pb-3 bg-gradient-to-b from-blue-50 to-white">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-base font-semibold">
-            안녕하세요, {user.nickname}님
-          </span>
-          <RoleBadge role={user.role} />
+    <div className="min-h-screen bg-slate-50 pb-6">
+      <section className="overflow-hidden bg-white">
+        <div className="mx-auto w-full max-w-6xl px-4 pb-6 pt-5 min-[390px]:px-5 md:px-8 md:pb-8 md:pt-8">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <p className="mb-1 text-[13px] font-medium text-slate-500">
+              {primaryAddress
+                ? `${primaryAddress.dong}에서의 오늘`
+                : "나에게 맞는 공간을 발견하세요"}
+            </p>
+            <h1 className="text-[24px] font-extrabold leading-tight tracking-[-0.045em] text-slate-950 min-[390px]:text-[26px] md:text-[32px]">
+              안녕하세요, {user.nickname}님
+            </h1>
+          </div>
+          <Link
+            href="/profile"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-200"
+          >
+            {user.nickname.slice(0, 1)}
+          </Link>
         </div>
-        <p className="text-xs text-gray-500">오늘 우리 동네는 어떤 소식이 있을까요?</p>
-      </div>
 
-      {/* 검색 바 */}
-      <Link
-        href="/search"
-        className="mx-4 mt-3 flex items-center gap-2 h-10 px-3 bg-concrete-100 rounded-pill text-sm text-concrete-500"
-      >
-        <span>🔍</span>
-        <span>건물·리뷰·서비스를 검색해 보세요</span>
-      </Link>
+        <Link
+          href="/search"
+          className="flex h-[52px] items-center gap-3 rounded-2xl bg-slate-100 px-4 text-sm text-slate-500 transition active:scale-[0.99]"
+        >
+          <Icon name="search" className="h-5 w-5 text-slate-400" />
+          <span className="min-w-0 flex-1 truncate">건물, 동네, 생활 서비스를 검색하세요</span>
+          <span className="hidden rounded-lg bg-white px-2 py-1 text-[10px] font-semibold text-slate-400 shadow-sm min-[390px]:block">
+            검색
+          </span>
+        </Link>
+        </div>
+      </section>
 
-      {/* 인기 건물 */}
-      {hotBuildings && hotBuildings.length > 0 && (
-        <section className="px-4 pt-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-sm font-bold text-concrete-900">🏢 인기 건물</h2>
-            <Link href="/buildings" className="text-[11px] text-warm-700 font-semibold">
-              전체 보기 ›
+      <section className="mx-auto w-full max-w-6xl px-4 pt-4 min-[390px]:px-5 md:px-8 md:pt-5">
+        <div className="grid grid-cols-2 gap-3 min-[400px]:grid-cols-4 md:gap-4">
+          {quickActions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="group flex min-h-[94px] flex-col items-center justify-center rounded-2xl bg-white px-2 py-3 shadow-[0_1px_3px_rgba(15,23,42,0.05)] ring-1 ring-slate-200/70 transition active:scale-95 md:min-h-[104px]"
+            >
+              <span className={`mb-1.5 flex h-9 w-9 items-center justify-center rounded-xl ${action.className}`}>
+                <Icon name={action.icon} className="h-5 w-5" />
+              </span>
+              <span className="text-[12px] font-bold tracking-[-0.02em] text-slate-800">
+                {action.label}
+              </span>
+              <span className="mt-0.5 text-[9px] text-slate-400">{action.description}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 pt-6 min-[390px]:px-5 md:px-8">
+        <SectionTitle title="요즘 주목받는 공간" href="/buildings" />
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar min-[390px]:-mx-5 min-[390px]:px-5 md:mx-0 md:grid md:grid-cols-3 md:gap-3 md:overflow-visible md:px-0 xl:grid-cols-4">
+          {hotBuildings.map((building, index) => (
+            <Link
+              key={building.id}
+              href={`/building/${building.id}`}
+              className="w-[38vw] min-w-[132px] max-w-[164px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_5px_20px_rgba(15,23,42,0.07)] ring-1 ring-slate-200/60 md:w-auto md:max-w-none"
+            >
+              <div
+                className={`relative h-24 p-3 ${
+                  index % 3 === 0
+                    ? "bg-gradient-to-br from-indigo-500 to-violet-600"
+                    : index % 3 === 1
+                      ? "bg-gradient-to-br from-cyan-500 to-blue-600"
+                      : "bg-gradient-to-br from-slate-700 to-slate-950"
+                }`}
+              >
+                <div className="absolute -right-7 -top-8 h-24 w-24 rounded-full border border-white/15" />
+                <span className="relative inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-semibold text-white backdrop-blur">
+                  <Icon name="mapPin" className="h-3 w-3" />
+                  {building.dong}
+                </span>
+                <div className="absolute bottom-3 left-3 right-3">
+                  <p className="line-clamp-2 text-[14px] font-extrabold leading-tight tracking-[-0.03em] text-white md:text-base">
+                    {building.name}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3">
+                <div>
+                  <p className="text-[9px] text-slate-400">{building.sigungu}</p>
+                  <p className="mt-0.5 text-[10px] font-semibold text-slate-600">
+                    리뷰 {building.ratingCount}개
+                  </p>
+                </div>
+                <div className="flex items-center gap-0.5 rounded-lg bg-amber-50 px-1.5 py-1 text-amber-600">
+                  <Icon name="star" className="h-3 w-3 fill-current" />
+                  <span className="text-[11px] font-extrabold">{building.ratingAvg.toFixed(1)}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 pt-5 min-[390px]:px-5 md:px-8">
+        <div className="relative overflow-hidden rounded-[20px] bg-slate-950 p-4 text-white shadow-lg shadow-slate-300 md:p-5">
+          <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-indigo-500/30 blur-2xl" />
+          <div className="relative flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
+              <Icon name="globe" className="h-5 w-5 text-indigo-300" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-indigo-300">Stay in Seoul</p>
+              <h2 className="mt-0.5 text-[15px] font-extrabold tracking-[-0.03em]">언어가 통하는 단기 거주</h2>
+              <p className="mt-1 truncate text-[10px] text-slate-400">출장·유학·워홀을 위한 가구 완비 공간</p>
+            </div>
+            <Link
+              href="/stays"
+              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl bg-white px-3 text-[10px] font-bold text-slate-950"
+            >
+              보기
+              <Icon name="arrowRight" className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4">
-            {hotBuildings.map((b) => (
+        </div>
+      </section>
+
+      {myChannels.length > 0 && (
+        <section className="mx-auto w-full max-w-6xl px-4 pt-6 min-[390px]:px-5 md:px-8">
+          <SectionTitle title="내 주변 커뮤니티" href="/feed" />
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            {myChannels.slice(0, 4).map((channel) => (
               <Link
-                key={b.id}
-                href={`/building/${b.id}`}
-                className="warm-card p-3 shrink-0 w-44 active:scale-95 transition"
+                key={channel.id}
+                href={`/channel/${channel.id}`}
+                className="rounded-2xl bg-white p-3 ring-1 ring-slate-200/70 transition active:scale-[0.98]"
               >
-                <div className="text-[10px] text-concrete-500 mb-0.5 truncate">{b.sigungu} {b.dong}</div>
-                <div className="text-sm font-bold text-concrete-900 line-clamp-2 leading-tight mb-1">{b.name}</div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-bold text-warm-600">{b.ratingAvg.toFixed(1)}</span>
-                  <span className="text-[10px] text-concrete-500">리뷰 {b.ratingCount}</span>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <Icon
+                    name={channel.kind.includes("building") ? "building" : "users"}
+                    className="h-[18px] w-[18px]"
+                  />
+                </span>
+                  <span className={`rounded-full px-2 py-1 text-[9px] font-bold ${
+                    channelStatus.get(channel.id) === "거주 중"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : channelStatus.get(channel.id) === "운영 중"
+                        ? "bg-indigo-50 text-indigo-600"
+                        : "bg-slate-100 text-slate-500"
+                  }`}>
+                    {channelStatus.get(channel.id)}
+                  </span>
                 </div>
+                <p className="line-clamp-2 text-[13px] font-bold leading-snug text-slate-800">
+                  {channel.title}
+                </p>
+                <p className="mt-1 text-[9px] text-slate-400">
+                  {channel.kind.includes("building") ? "건물 채널" : "지역 채널"}
+                </p>
               </Link>
             ))}
           </div>
         </section>
       )}
 
-      {/* 빠른 메뉴 (건물/리뷰/서비스) */}
-      <section className="px-4 pt-3">
-        <div className="grid grid-cols-3 gap-2">
-          <Link
-            href="/buildings"
-            className="warm-card p-3 flex flex-col items-center text-center"
-          >
-            <div className="text-2xl mb-1">🏢</div>
-            <div className="text-xs font-semibold text-concrete-900">건물</div>
-            <div className="text-[10px] text-concrete-500">리뷰·평점</div>
-          </Link>
-          <Link
-            href="/services"
-            className="warm-card p-3 flex flex-col items-center text-center"
-          >
-            <div className="text-2xl mb-1">🛎</div>
-            <div className="text-xs font-semibold text-concrete-900">서비스</div>
-            <div className="text-[10px] text-concrete-500">청소·AS·이사</div>
-          </Link>
-          <Link
-            href="/review/write"
-            className="warm-card p-3 flex flex-col items-center text-center bg-warm-50 border-warm-200"
-          >
-            <div className="text-2xl mb-1">✍️</div>
-            <div className="text-xs font-semibold text-warm-700">리뷰 쓰기</div>
-            <div className="text-[10px] text-concrete-500">도움 주기</div>
-          </Link>
-        </div>
-      </section>
-
-      {/* 내 채널 */}
-      <section className="px-4 pt-4 pb-2">
-        <div className="flex items-baseline justify-between mb-2">
-          <h2 className="text-sm font-bold text-gray-900">내 채널</h2>
-          <span className="text-[11px] text-gray-400">주소 기반 자동 개설</span>
-        </div>
-        {myChannels.length === 0 ? (
-          <div className="text-xs text-gray-400 py-4">
-            아직 등록된 주소가 없어요. 프로필에서 주소를 추가해보세요.
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-2">
-            {myChannels.map((c) => (
-              <Link
-                key={c.id}
-                href={`/channel/${c.id}`}
-                className="p-3 border border-gray-200 rounded-xl hover:border-officelink-primary"
-              >
-                <div className="text-[11px] text-gray-400 mb-0.5">
-                  {c.kind === "tenant-building" || c.kind === "landlord-building" || c.kind === "manager-building"
-                    ? "🏢 오피스텔"
-                    : "📍 동네"}
-                </div>
-                <div className="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug">
-                  {c.title}
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 인기 글 */}
-      <section className="px-4 pt-4 pb-2">
-        <h2 className="text-sm font-bold text-gray-900 mb-2">🔥 인기 글</h2>
-        {hot.length === 0 ? (
-          <div className="text-xs text-gray-400 py-4">아직 인기 글이 없어요.</div>
-        ) : (
-          <div className="-mx-4 border-y border-gray-100">
-            {hot.map((p) => {
-              const ch = channelMap.get(p.channelId);
-              return (
-                <PostCard
-                  key={p.id}
-                  post={p}
-                  channelTitle={ch?.title}
-                />
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* 공용 채널 */}
-      <section className="px-4 pt-4 pb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-2">우리 동네 공개 채널</h2>
-        <div className="grid grid-cols-2 gap-2">
-          {publicChannels.map((c) => (
+      <section className="mx-auto w-full max-w-6xl px-4 pb-5 pt-6 min-[390px]:px-5 md:px-8">
+        <SectionTitle title="지금 이웃들의 이야기" href="/feed" />
+        <div className="overflow-hidden rounded-[22px] bg-white ring-1 ring-slate-200/70 md:grid md:grid-cols-3">
+          {hotPosts.map((post, index) => (
             <Link
-              key={c.id}
-              href={`/channel/${c.id}`}
-              className="p-3 border border-gray-200 rounded-xl hover:border-officelink-primary"
+              key={post.id}
+              href={`/post/${post.id}`}
+              className={`block p-3.5 transition active:bg-slate-50 md:min-h-[120px] ${
+                index > 0 ? "border-t border-slate-100 md:border-l md:border-t-0" : ""
+              }`}
             >
-              <div className="text-[11px] text-gray-400 mb-0.5">{c.category}</div>
-              <div className="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug">
-                {c.title}
+              <div className="mb-2 flex items-center gap-2">
+                <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500">
+                  {post.category}
+                </span>
+                <span className="truncate text-[10px] text-slate-400">
+                  {channelMap.get(post.channelId)?.title}
+                </span>
+              </div>
+              <p className="line-clamp-1 text-sm font-bold tracking-[-0.02em] text-slate-900">
+                {post.title}
+              </p>
+              <div className="mt-2 flex items-center gap-3 text-[10px] text-slate-400">
+                <span>{post.authorNickname}</span>
+                <span>좋아요 {post.likes}</span>
+                <span>댓글 {post.commentCount}</span>
               </div>
             </Link>
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+function SectionTitle({ title, href }: { title: string; href: string }) {
+  return (
+    <div className="mb-2.5 flex items-center justify-between">
+      <h2 className="text-[16px] font-extrabold tracking-[-0.035em] text-slate-950">{title}</h2>
+      <Link href={href} className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+        전체 보기
+        <Icon name="arrowRight" className="h-3.5 w-3.5" />
+      </Link>
     </div>
   );
 }

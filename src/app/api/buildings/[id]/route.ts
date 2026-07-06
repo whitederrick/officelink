@@ -1,17 +1,14 @@
-import { NextResponse } from "next/server";
-import { getBuilding, getReviews } from "@/lib/storage";
+import { ensureSeeded } from "@/server/seed.server";
+import { buildings, listReviews } from "@/server/repo";
+import { ok, fail } from "@/server/http";
 
-/**
- * GET /api/buildings/:id
- */
+export const dynamic = "force-dynamic";
+
+/** GET /api/buildings/:id */
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const b = getBuilding(params.id);
-  if (!b) {
-    return NextResponse.json({ ok: false, error: "건물을 찾을 수 없어요" }, { status: 404 });
-  }
-  const reviews = getReviews(b.id);
-  return NextResponse.json({
-    ok: true,
-    data: { building: b, reviewCount: reviews.length },
-  });
+  ensureSeeded();
+  const building = buildings.byId(params.id);
+  if (!building) return fail("건물을 찾을 수 없어요", 404);
+  const reviews = listReviews(building.id);
+  return ok({ building, reviews, reviewCount: reviews.length });
 }

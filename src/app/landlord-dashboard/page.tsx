@@ -10,6 +10,7 @@ import {
   getReviews,
   getUser,
 } from "@/lib/storage";
+import { canAccessRole, roleHome } from "@/lib/access";
 import { calcBuildingStats } from "@/lib/stats";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingIntro } from "@/components/LoadingHouse";
@@ -30,6 +31,10 @@ export default function LandlordDashboardPage() {
     const u = getUser();
     if (!u) {
       router.replace("/onboarding");
+      return;
+    }
+    if (!canAccessRole(u.role, ["landlord"])) {
+      router.replace(roleHome(u.role));
       return;
     }
     // 가짜 임대인 프로필 가져오기

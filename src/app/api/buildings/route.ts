@@ -1,24 +1,19 @@
-import { NextResponse } from "next/server";
-import { getBuildings } from "@/lib/storage";
+import { ensureSeeded } from "@/server/seed.server";
+import { listBuildings } from "@/server/repo";
+import { ok } from "@/server/http";
+
+export const dynamic = "force-dynamic";
 
 /**
- * GET /api/buildings
- * Query: ?sigungu=마포구&dong=상암동&minRating=4
+ * GET /api/buildings?sigungu=마포구&dong=상암동&minRating=4
  */
 export async function GET(req: Request) {
+  ensureSeeded();
   const url = new URL(req.url);
-  const sigungu = url.searchParams.get("sigungu");
-  const dong = url.searchParams.get("dong");
-  const minRating = parseFloat(url.searchParams.get("minRating") || "0");
+  const sigungu = url.searchParams.get("sigungu") || undefined;
+  const dong = url.searchParams.get("dong") || undefined;
+  const minRating = parseFloat(url.searchParams.get("minRating") || "0") || undefined;
 
-  let list = getBuildings();
-  if (sigungu) list = list.filter((b) => b.sigungu === sigungu);
-  if (dong) list = list.filter((b) => b.dong === dong);
-  if (minRating > 0) list = list.filter((b) => b.ratingAvg >= minRating);
-
-  return NextResponse.json({
-    ok: true,
-    count: list.length,
-    data: list,
-  });
+  const list = listBuildings({ sigungu, dong, minRating });
+  return ok(list, { count: list.length });
 }

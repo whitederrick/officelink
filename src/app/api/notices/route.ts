@@ -1,10 +1,12 @@
-import { NextResponse } from "next/server";
-import { getNotices } from "@/lib/storage";
+import { ensureSeeded } from "@/server/seed.server";
+import { listNotices } from "@/server/repo";
+import { ok } from "@/server/http";
 
-/**
- * GET /api/notices
- */
+export const dynamic = "force-dynamic";
+
+/** GET /api/notices */
 export async function GET() {
-  const list = getNotices();
-  return NextResponse.json({ ok: true, count: list.length, data: list });
+  ensureSeeded();
+  const list = listNotices();
+  return ok(list, { count: list.length });
 }
