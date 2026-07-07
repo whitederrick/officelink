@@ -46,8 +46,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-30 border-b border-[#d6e7f4] bg-[#fbfdff]/86 backdrop-blur-xl">
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 min-[390px]:px-5 md:px-8">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#101a33] via-[#46216f] to-[#64c8ff] text-white shadow-[0_10px_24px_rgba(70,33,111,0.24)]">
-                <div className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#64c8ff]" />
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#101a33] via-[#46216f] to-[#7dd3fc] text-white shadow-[0_10px_24px_rgba(70,33,111,0.24)]">
+                <div className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#7dd3fc]" />
                 <Icon name="building" className="h-4.5 w-4.5" />
               </div>
               <div className="leading-none">
@@ -77,7 +77,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   >
                     <Icon name="bell" className="h-[19px] w-[19px]" />
                     {unread > 0 && (
-                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#64c8ff] px-1 text-[10px] font-bold text-[#172033]">
+                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#7dd3fc] px-1 text-[10px] font-bold text-[#172033]">
                         {unread > 9 ? "9+" : unread}
                       </span>
                     )}
@@ -133,7 +133,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   }`}
                 >
                   {active && (
-                    <span className="absolute top-2 h-1 w-7 rounded-full bg-gradient-to-r from-[#46216f] via-[#64c8ff] to-[#6d3bd1]" />
+                    <span className="absolute top-2 h-1 w-7 rounded-full bg-gradient-to-r from-[#46216f] via-[#7dd3fc] to-[#6d3bd1]" />
                   )}
                   <Icon
                     name={tab.icon}

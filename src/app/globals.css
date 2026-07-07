@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -6,10 +6,10 @@
   color-scheme: light;
   --brand-ink: #172033;
   --brand-ink-2: #26375f;
-  --brand-sky: #64c8ff;
+  --brand-sky: #7dd3fc;
   --brand-purple: #46216f;
   --brand-purple-2: #6d3bd1;
-  --brand-accent: #64c8ff;
+  --brand-accent: #7dd3fc;
   --brand-accent-soft: #e8f6ff;
   --brand-mist: #edf6ff;
   --brand-paper: #fbfdff;
@@ -38,7 +38,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* 모바일 우선 반응형 앱 프레임 */
+/* 紐⑤컮???곗꽑 諛섏쓳?????꾨젅??*/
 .app-shell {
   width: 100%;
   max-width: 100%;
@@ -82,7 +82,7 @@ body {
   overflow: hidden;
 }
 
-/* 임대인/관리소용: 큰 텍스트 모드 */
+/* ?꾨???愿由ъ냼?? ???띿뒪??紐⑤뱶 */
 .senior-mode {
   font-size: 17px;
   line-height: 1.7;
@@ -107,7 +107,7 @@ body {
   font-size: 1rem;
 }
 
-/* 고대비 모드 (시력이 약한 분) */
+/* 怨좊?鍮?紐⑤뱶 (?쒕젰???쏀븳 遺? */
 .hc-mode {
   --bg-base: #ffffff;
   --bg-card: #ffffff;
@@ -121,7 +121,7 @@ body {
   color: #1f2937 !important;
 }
 
-/* 따뜻한 카드: 앰보스 느낌 + 그림자 약하게 */
+/* ?곕쑜??移대뱶: ?곕낫???먮굦 + 洹몃┝???쏀븯寃?*/
 .warm-card {
   background: #ffffff;
   border: 1px solid #dfe5dd;
@@ -134,7 +134,7 @@ body {
   box-shadow: 0 1px 1px rgba(15, 23, 42, 0.02);
 }
 
-/* 핵심 CTA — 그라디언트 안 쓰고 단색 + 약한 그림자 */
+/* ?듭떖 CTA ??洹몃씪?붿뼵?????곌퀬 ?⑥깋 + ?쏀븳 洹몃┝??*/
 .cta-primary {
   background: #172033;
   color: #ffffff;
@@ -146,7 +146,7 @@ body {
   background:
     linear-gradient(rgba(23, 32, 51, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(23, 32, 51, 0.045) 1px, transparent 1px),
-    radial-gradient(circle at 12% 0%, rgba(100, 200, 255, 0.34), transparent 30%),
+    radial-gradient(circle at 12% 0%, rgba(125, 211, 252, 0.34), transparent 30%),
     radial-gradient(circle at 88% 8%, rgba(70, 33, 111, 0.2), transparent 26%),
     linear-gradient(135deg, #fbfdff 0%, #edf6ff 48%, #f6f1ff 100%);
   background-size: 28px 28px, 28px 28px, auto, auto;
@@ -168,7 +168,7 @@ body {
 }
 
 .brand-accent-line {
-  background: linear-gradient(90deg, var(--brand-purple), var(--brand-sky), var(--brand-purple-2));
+  background: linear-gradient(90deg, #46216f, #7dd3fc, #6d3bd1);
 }
 .cta-primary:active {
   background: #25324a;
@@ -191,7 +191,7 @@ body {
   background: #172033;
 }
 
-/* 부드러운 그라디언트 헤더 */
+/* 遺?쒕윭??洹몃씪?붿뼵???ㅻ뜑 */
 .bg-soft-gradient {
   background: linear-gradient(180deg, #fbfbf8 0%, #ffffff 100%);
 }
@@ -202,7 +202,7 @@ body {
   background: linear-gradient(180deg, #f4f0e8 0%, #ffffff 100%);
 }
 
-/* 토스트 애니메이션 */
+/* ?좎뒪???좊땲硫붿씠??*/
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -234,7 +234,7 @@ body {
   animation: fadeIn 0.2s ease-out;
 }
 
-/* 다크모드 */
+/* ?ㅽ겕紐⑤뱶 */
 :root[data-theme="dark"] {
   --bg-base: #0d1117;
   --bg-card: #161b22;
@@ -245,7 +245,7 @@ body {
   color: #e6edf3;
 }
 
-/* 다크모드 토큰 오버라이드 */
+/* ?ㅽ겕紐⑤뱶 ?좏겙 ?ㅻ쾭?쇱씠??*/
 [data-theme="dark"] .app-shell {
   background: #161b22;
   border-color: #30363d;

@@ -51,7 +51,7 @@ const quickActions: {
 ];
 
 const buildingSkins = [
-  "from-[#101a33] via-[#26375f] to-[#64c8ff]",
+  "from-[#101a33] via-[#26375f] to-[#7dd3fc]",
   "from-[#172033] via-[#46216f] to-[#6d3bd1]",
   "from-[#151c36] via-[#244166] to-[#5a7dff]",
 ];
@@ -138,7 +138,7 @@ export default function HomePage() {
           <div className="mb-6 flex items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="mb-3 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#64c8ff] shadow-[0_0_0_5px_rgba(100,200,255,0.18)]" />
+                <span className="h-2 w-2 rounded-full bg-[#7dd3fc] shadow-[0_0_0_5px_rgba(125,211,252,0.18)]" />
                 <p className="brand-kicker">
                   {primaryAddress ? `${primaryAddress.dong} live grid` : "officelink urban grid"}
                 </p>
@@ -152,7 +152,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/profile"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/50 bg-gradient-to-br from-[#172033] via-[#46216f] to-[#64c8ff] text-sm font-semibold text-white shadow-[0_14px_32px_rgba(70,33,111,0.24)]"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/50 bg-gradient-to-br from-[#172033] via-[#46216f] to-[#7dd3fc] text-sm font-semibold text-white shadow-[0_14px_32px_rgba(70,33,111,0.24)]"
             >
               {user.nickname.slice(0, 1)}
             </Link>
@@ -163,7 +163,7 @@ export default function HomePage() {
               href="/search"
               className="flex h-[58px] items-center gap-3 rounded-[22px] bg-white/88 px-4 text-[15px] text-[#4a5d7a] transition active:scale-[0.99]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#46216f] to-[#64c8ff] text-white shadow-[0_10px_24px_rgba(70,33,111,0.2)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#46216f] to-[#7dd3fc] text-white shadow-[0_10px_24px_rgba(70,33,111,0.2)]">
                 <Icon name="search" className="h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1 truncate">건물, 동네, 생활 서비스를 검색하세요</span>
@@ -181,9 +181,9 @@ export default function HomePage() {
             <Link
               key={action.href}
               href={action.href}
-              className="group relative min-h-[108px] overflow-hidden rounded-[24px] border border-[#d6e7f4] bg-white/92 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:-translate-y-0.5 hover:border-[#64c8ff] active:scale-[0.98]"
+              className="group relative min-h-[108px] overflow-hidden rounded-[24px] border border-[#d6e7f4] bg-white/92 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:-translate-y-0.5 hover:border-[#7dd3fc] active:scale-[0.98]"
             >
-              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#46216f] via-[#64c8ff] to-[#6d3bd1] opacity-0 transition group-hover:opacity-100" />
+              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#46216f] via-[#7dd3fc] to-[#6d3bd1] opacity-0 transition group-hover:opacity-100" />
               <div className="mb-3 flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef7ff] text-[#46216f] transition group-hover:bg-[#46216f] group-hover:text-white">
                   <Icon name={action.icon} className="h-5 w-5" />
@@ -241,20 +241,20 @@ export default function HomePage() {
       <section className="mx-auto w-full max-w-6xl px-4 pt-5 min-[390px]:px-5 md:px-8">
         <div className="relative overflow-hidden rounded-[28px] border border-[#6d3bd1]/35 bg-gradient-to-br from-[#101a33] via-[#172033] to-[#46216f] p-4 text-white shadow-[0_24px_58px_rgba(70,33,111,0.24)] md:p-5">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[length:24px_24px]" />
-          <div className="absolute -right-14 -top-16 h-44 w-44 rounded-full bg-[#64c8ff]/28 blur-2xl" />
+          <div className="absolute -right-14 -top-16 h-44 w-44 rounded-full bg-[#7dd3fc]/28 blur-2xl" />
           <div className="absolute -left-12 bottom-0 h-36 w-36 rounded-full bg-[#6d3bd1]/32 blur-2xl" />
           <div className="relative flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/12 text-[#64c8ff]">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/12 text-[#7dd3fc]">
               <Icon name="globe" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#64c8ff]">Stay Network</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7dd3fc]">Stay Network</p>
               <h2 className="mt-0.5 text-[18px] font-semibold tracking-[-0.03em]">언어가 통하는 단기 거주</h2>
               <p className="mt-1 truncate text-[13px] text-white/65">출장, 유학, 워홀을 위한 가구 완비 공간</p>
             </div>
             <Link
               href="/stays"
-              className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-[#64c8ff] px-3.5 text-[13px] font-semibold text-[#172033]"
+              className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-[#7dd3fc] px-3.5 text-[13px] font-semibold text-[#172033]"
             >
               둘러보기
               <Icon name="arrowRight" className="h-3.5 w-3.5" />
@@ -273,7 +273,7 @@ export default function HomePage() {
                 <Link
                   key={channel.id}
                   href={`/channel/${channel.id}`}
-                  className="rounded-[24px] border border-[#d6e7f4] bg-white/95 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:border-[#64c8ff] active:scale-[0.98]"
+                  className="rounded-[24px] border border-[#d6e7f4] bg-white/95 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:border-[#7dd3fc] active:scale-[0.98]"
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#eef7ff] text-[#46216f]">
