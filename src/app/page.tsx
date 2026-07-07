@@ -18,43 +18,31 @@ const quickActions: {
   icon: IconName;
   label: string;
   description: string;
-  code: string;
 }[] = [
-  {
-    href: "/buildings",
-    icon: "building",
-    label: "건물 찾기",
-    description: "실거주 리뷰와 평점",
-    code: "BLD",
-  },
-  {
-    href: "/stays",
-    icon: "globe",
-    label: "단기 거주",
-    description: "언어가 통하는 매물",
-    code: "STY",
-  },
-  {
-    href: "/review/write",
-    icon: "pen",
-    label: "리뷰 작성",
-    description: "내 경험을 기록",
-    code: "REV",
-  },
-  {
-    href: "/events",
-    icon: "calendar",
-    label: "동네 모임",
-    description: "생활권 연결",
-    code: "LNK",
-  },
+  { href: "/buildings", icon: "building", label: "건물 리뷰", description: "실거주 평점 확인" },
+  { href: "/stays", icon: "globe", label: "단기 거주", description: "언어별 매물 탐색" },
+  { href: "/review/write", icon: "pen", label: "리뷰 쓰기", description: "경험 공유" },
+  { href: "/events", icon: "calendar", label: "동네 모임", description: "생활권 연결" },
 ];
 
 const buildingSkins = [
-  "from-[#101a33] via-[#26375f] to-[#7dd3fc]",
-  "from-[#172033] via-[#46216f] to-[#6d3bd1]",
-  "from-[#151c36] via-[#244166] to-[#5a7dff]",
+  "from-[#111827] via-[#1d2b53] to-[#0284c7]",
+  "from-[#111827] via-[#3b1d65] to-[#7c3aed]",
+  "from-[#0f172a] via-[#233876] to-[#38bdf8]",
+  "from-[#131326] via-[#352064] to-[#2563eb]",
+  "from-[#172033] via-[#1e3a8a] to-[#8b5cf6]",
 ];
+
+function formatCount(value: number) {
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+  return `${value}`;
+}
+
+function scopeLabel(scopeKey: string) {
+  if (scopeKey.startsWith("building:")) return "거주 건물";
+  if (scopeKey.startsWith("region:")) return "관심 지역";
+  return "공개 채널";
+}
 
 export default function HomePage() {
   const router = useRouter();
@@ -86,23 +74,12 @@ export default function HomePage() {
     }
 
     const myChannels = allChannels.filter((channel) => myScopes.has(channel.scopeKey));
-    const primaryScopes = new Set<string>();
     const primaryAddress = addresses.find((address) => address.isPrimary) ?? addresses[0];
+    const primaryScopes = new Set<string>();
     if (primaryAddress) {
       primaryScopes.add(`building:${primaryAddress.detail}`);
       primaryScopes.add(`region:${primaryAddress.sigungu}:${primaryAddress.dong}`);
     }
-
-    const channelStatus = new Map(
-      myChannels.map((channel) => [
-        channel.id,
-        user.role === "tenant"
-          ? primaryScopes.has(channel.scopeKey)
-            ? "거주 중"
-            : "관심 지역"
-          : "운영 중",
-      ]),
-    );
 
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const hotPosts = [...allPosts]
@@ -113,6 +90,15 @@ export default function HomePage() {
           (a.likes + a.commentCount * 2 + a.views * 0.1),
       )
       .slice(0, 3);
+
+    const channelStatus = new Map(
+      myChannels.map((channel) => [
+        channel.id,
+        user.role === "tenant" && primaryScopes.has(channel.scopeKey)
+          ? "거주 중"
+          : scopeLabel(channel.scopeKey),
+      ]),
+    );
 
     return {
       user,
@@ -130,172 +116,178 @@ export default function HomePage() {
   const { user, primaryAddress, hotBuildings, hotPosts, myChannels, channelStatus, channelMap } = data;
 
   return (
-    <div className="min-h-screen bg-[#edf6ff] pb-6 text-[#172033]">
-      <section className="urban-grid-bg relative overflow-hidden border-b border-[#d6e7f4]">
-        <div className="absolute right-5 top-5 hidden h-24 w-24 rounded-full border border-[#46216f]/15 md:block" />
-        <div className="absolute -right-16 top-24 h-48 w-48 rounded-full bg-[#6d3bd1]/16 blur-3xl" />
-        <div className="mx-auto w-full max-w-6xl px-4 pb-7 pt-5 min-[390px]:px-5 md:px-8 md:pb-10 md:pt-9">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#7dd3fc] shadow-[0_0_0_5px_rgba(125,211,252,0.18)]" />
-                <p className="brand-kicker">
-                  {primaryAddress ? `${primaryAddress.dong} live grid` : "officelink urban grid"}
-                </p>
-              </div>
-              <h1 className="max-w-[650px] text-[32px] font-semibold leading-[1.04] tracking-[-0.06em] text-[#172033] min-[390px]:text-[36px] md:text-[52px]">
-                내 건물과 동네를 한눈에 관리하는 생활 지도.
-              </h1>
-              <p className="mt-4 max-w-[520px] text-[15px] leading-6 text-[#4a5d7a] md:text-[16px]">
-                {user.nickname}님에게 필요한 리뷰, 서비스, 커뮤니티 연결을 도시의 좌표처럼 정리했습니다.
-              </p>
+    <div className="min-h-screen bg-[#f7f9fc] pb-6 text-[#0f172a]">
+      <section className="relative overflow-hidden border-b border-[#e2e8f0] bg-[radial-gradient(circle_at_15%_0%,rgba(56,189,248,0.24),transparent_34%),radial-gradient(circle_at_92%_10%,rgba(124,58,237,0.18),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f7f9fc_100%)]">
+        <div className="mx-auto w-full max-w-6xl px-5 pb-6 pt-6 md:px-8 md:pb-10 md:pt-10">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#dbeafe] bg-white/80 px-3 py-1.5 text-[12px] font-semibold text-[#1e3a8a] shadow-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8]" />
+              {primaryAddress ? `${primaryAddress.dong} 생활권` : "OFFICELINK"}
             </div>
             <Link
               href="/profile"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/50 bg-gradient-to-br from-[#172033] via-[#46216f] to-[#7dd3fc] text-sm font-semibold text-white shadow-[0_14px_32px_rgba(70,33,111,0.24)]"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#111827] text-[14px] font-bold text-white shadow-[0_16px_36px_rgba(15,23,42,0.22)]"
             >
               {user.nickname.slice(0, 1)}
             </Link>
           </div>
 
-          <div className="brand-card rounded-[28px] p-2">
-            <Link
-              href="/search"
-              className="flex h-[58px] items-center gap-3 rounded-[22px] bg-white/88 px-4 text-[15px] text-[#4a5d7a] transition active:scale-[0.99]"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#46216f] to-[#7dd3fc] text-white shadow-[0_10px_24px_rgba(70,33,111,0.2)]">
-                <Icon name="search" className="h-5 w-5" />
-              </span>
-              <span className="min-w-0 flex-1 truncate">건물, 동네, 생활 서비스를 검색하세요</span>
-              <span className="hidden rounded-full border border-[#d6e7f4] bg-[#eef7ff] px-3 py-1 text-[12px] font-semibold text-[#46216f] min-[390px]:block">
-                Search
-              </span>
-            </Link>
+          <div className="grid gap-7 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+            <div>
+              <h1 className="max-w-[680px] text-[34px] font-black leading-[1.02] tracking-[-0.07em] text-[#0f172a] min-[390px]:text-[40px] md:text-[60px]">
+                내 건물과 동네를
+                <br />
+                한 화면에서 정리합니다.
+              </h1>
+              <p className="mt-4 max-w-[560px] text-[15px] leading-6 text-[#475569] md:text-[17px] md:leading-7">
+                리뷰, 생활 서비스, 커뮤니티, 단기 거주 정보를 생활권 기준으로 모아
+                필요한 순간 바로 움직일 수 있게 만듭니다.
+              </p>
+            </div>
+
+            <div className="rounded-[30px] border border-white bg-[#0f172a] p-4 text-white shadow-[0_28px_80px_rgba(15,23,42,0.24)]">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#7dd3fc]">
+                  Today Brief
+                </span>
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[12px] text-white/70">
+                  {primaryAddress?.dong ?? "생활권"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2.5">
+                <Metric label="공간" value={hotBuildings.length || 0} />
+                <Metric label="채널" value={myChannels.length || 0} />
+                <Metric label="피드" value={hotPosts.length || 0} />
+              </div>
+            </div>
           </div>
+
+          <Link
+            href="/search"
+            className="mt-7 flex h-[62px] items-center gap-3 rounded-[24px] border border-[#e2e8f0] bg-white px-4 text-[15px] text-[#64748b] shadow-[0_18px_54px_rgba(15,23,42,0.08)] transition active:scale-[0.99] md:max-w-2xl"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eff6ff] text-[#2563eb]">
+              <Icon name="search" className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1 truncate">건물, 동네, 생활 서비스를 검색하세요</span>
+            <span className="rounded-full bg-[#111827] px-4 py-2 text-[13px] font-bold text-white">검색</span>
+          </Link>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 pt-4 min-[390px]:px-5 md:px-8 md:pt-5">
-        <div className="grid grid-cols-2 gap-2.5 min-[400px]:grid-cols-4 md:gap-3">
+      <section className="mx-auto w-full max-w-6xl px-5 pt-5 md:px-8">
+        <div className="grid grid-cols-4 gap-2.5">
           {quickActions.map((action) => (
             <Link
               key={action.href}
               href={action.href}
-              className="group relative min-h-[108px] overflow-hidden rounded-[24px] border border-[#d6e7f4] bg-white/92 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:-translate-y-0.5 hover:border-[#7dd3fc] active:scale-[0.98]"
+              className="group rounded-[22px] border border-[#e2e8f0] bg-white p-3.5 shadow-[0_12px_34px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-[#bfdbfe] active:scale-[0.98] min-[390px]:p-4"
             >
-              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#46216f] via-[#7dd3fc] to-[#6d3bd1] opacity-0 transition group-hover:opacity-100" />
-              <div className="mb-3 flex items-center justify-between">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef7ff] text-[#46216f] transition group-hover:bg-[#46216f] group-hover:text-white">
-                  <Icon name={action.icon} className="h-5 w-5" />
-                </span>
-                <span className="text-[11px] font-bold tracking-[0.14em] text-[#8a79b7]">{action.code}</span>
-              </div>
-              <span className="block text-[15px] font-semibold tracking-[-0.03em] text-[#172033]">
+              <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#1e3a8a] transition group-hover:bg-[#111827] group-hover:text-white">
+                <Icon name={action.icon} className="h-5 w-5" />
+              </span>
+              <span className="block text-[14px] font-bold tracking-[-0.03em] text-[#0f172a] min-[390px]:text-[15px]">
                 {action.label}
               </span>
-              <span className="mt-1 block text-[13px] text-[#4a5d7a]">{action.description}</span>
+              <span className="mt-1 hidden text-[12px] text-[#64748b] min-[390px]:block">
+                {action.description}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 pt-8 min-[390px]:px-5 md:px-8">
-        <SectionTitle title="요즘 주목받는 공간" href="/buildings" code="SPACES" />
-        <div className="-mx-4 flex gap-2.5 overflow-x-auto px-4 pb-2 no-scrollbar min-[390px]:-mx-5 min-[390px]:px-5 md:mx-0 md:grid md:grid-cols-3 md:gap-3 md:overflow-visible md:px-0 xl:grid-cols-5">
+      <section className="mx-auto w-full max-w-6xl px-5 pt-8 md:px-8">
+        <SectionTitle title="요즘 주목받는 공간" href="/buildings" eyebrow="SPACES" />
+        <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-2 no-scrollbar md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 xl:grid-cols-5">
           {hotBuildings.map((building, index) => (
             <Link
               key={building.id}
               href={`/building/${building.id}`}
-              className="w-[37vw] min-w-[136px] max-w-[166px] shrink-0 overflow-hidden rounded-[24px] border border-[#d6e7f4] bg-white/95 shadow-[0_14px_36px_rgba(38,55,95,0.09)] md:w-auto md:max-w-none"
+              className="w-[34vw] min-w-[128px] max-w-[156px] shrink-0 overflow-hidden rounded-[22px] border border-[#e2e8f0] bg-white shadow-[0_16px_38px_rgba(15,23,42,0.08)] md:w-auto md:max-w-none"
             >
               <div className={`relative h-24 bg-gradient-to-br p-3 ${buildingSkins[index % buildingSkins.length]}`}>
-                <div className="brand-accent-line absolute bottom-0 left-0 h-1 w-full" />
-                <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full border border-white/10" />
-                <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white/85 backdrop-blur">
-                  <Icon name="mapPin" className="h-3 w-3" />
+                <span className="inline-flex rounded-full bg-white/14 px-2 py-0.5 text-[11px] font-semibold text-white/90 backdrop-blur">
                   {building.dong}
                 </span>
-                <div className="absolute bottom-4 left-3 right-3">
-                  <p className="line-clamp-2 text-[15px] font-semibold leading-tight tracking-[-0.03em] text-white">
-                    {building.name}
-                  </p>
-                </div>
+                <p className="absolute bottom-3 left-3 right-3 line-clamp-2 text-[15px] font-black leading-tight tracking-[-0.04em] text-white">
+                  {building.name}
+                </p>
               </div>
               <div className="flex items-center justify-between p-3">
                 <div>
-                  <p className="text-[11px] text-[#8a79b7]">{building.sigungu}</p>
-                  <p className="mt-0.5 text-[13px] font-medium text-[#4a5d7a]">
+                  <p className="text-[11px] text-[#94a3b8]">{building.sigungu}</p>
+                  <p className="mt-0.5 text-[13px] font-semibold text-[#475569]">
                     리뷰 {building.ratingCount}개
                   </p>
                 </div>
-                <div className="flex items-center gap-0.5 rounded-full bg-[#eef7ff] px-2 py-1 text-[#46216f]">
-                  <Icon name="star" className="h-3 w-3 fill-current" />
-                  <span className="text-[12px] font-semibold">{building.ratingAvg.toFixed(1)}</span>
-                </div>
+                <span className="rounded-full bg-[#eff6ff] px-2 py-1 text-[12px] font-bold text-[#1d4ed8]">
+                  {building.ratingAvg.toFixed(1)}
+                </span>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 pt-5 min-[390px]:px-5 md:px-8">
-        <div className="relative overflow-hidden rounded-[28px] border border-[#6d3bd1]/35 bg-gradient-to-br from-[#101a33] via-[#172033] to-[#46216f] p-4 text-white shadow-[0_24px_58px_rgba(70,33,111,0.24)] md:p-5">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[length:24px_24px]" />
-          <div className="absolute -right-14 -top-16 h-44 w-44 rounded-full bg-[#7dd3fc]/28 blur-2xl" />
-          <div className="absolute -left-12 bottom-0 h-36 w-36 rounded-full bg-[#6d3bd1]/32 blur-2xl" />
-          <div className="relative flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/12 text-[#7dd3fc]">
+      <section className="mx-auto w-full max-w-6xl px-5 pt-5 md:px-8">
+        <Link
+          href="/stays"
+          className="group grid gap-4 overflow-hidden rounded-[28px] border border-[#dbeafe] bg-white p-4 shadow-[0_18px_54px_rgba(15,23,42,0.08)] md:grid-cols-[1fr_auto] md:items-center md:p-5"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#111827] text-[#7dd3fc]">
               <Icon name="globe" className="h-5 w-5" />
             </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7dd3fc]">Stay Network</p>
-              <h2 className="mt-0.5 text-[18px] font-semibold tracking-[-0.03em]">언어가 통하는 단기 거주</h2>
-              <p className="mt-1 truncate text-[13px] text-white/65">출장, 유학, 워홀을 위한 가구 완비 공간</p>
+            <div>
+              <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-[#2563eb]">Stay Network</p>
+              <h2 className="mt-1 text-[20px] font-black tracking-[-0.04em] text-[#0f172a]">
+                언어가 통하는 단기 거주
+              </h2>
+              <p className="mt-1 text-[13px] leading-5 text-[#64748b]">
+                출장, 유학, 워홀을 위한 가구 완비 공간을 빠르게 찾습니다.
+              </p>
             </div>
-            <Link
-              href="/stays"
-              className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-[#7dd3fc] px-3.5 text-[13px] font-semibold text-[#172033]"
-            >
-              둘러보기
-              <Icon name="arrowRight" className="h-3.5 w-3.5" />
-            </Link>
           </div>
-        </div>
+          <span className="inline-flex w-fit items-center gap-1 rounded-full bg-[#eff6ff] px-4 py-2 text-[13px] font-bold text-[#1d4ed8] transition group-hover:bg-[#111827] group-hover:text-white">
+            둘러보기
+            <Icon name="arrowRight" className="h-3.5 w-3.5" />
+          </span>
+        </Link>
       </section>
 
       {myChannels.length > 0 && (
-        <section className="mx-auto w-full max-w-6xl px-4 pt-8 min-[390px]:px-5 md:px-8">
-          <SectionTitle title="내 주변 커뮤니티" href="/feed" code="LOCAL" />
+        <section className="mx-auto w-full max-w-6xl px-5 pt-8 md:px-8">
+          <SectionTitle title="내 주변 커뮤니티" href="/feed" eyebrow="LOCAL" />
           <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
             {myChannels.slice(0, 4).map((channel) => {
               const status = channelStatus.get(channel.id);
+              const active = status === "거주 중";
               return (
                 <Link
                   key={channel.id}
                   href={`/channel/${channel.id}`}
-                  className="rounded-[24px] border border-[#d6e7f4] bg-white/95 p-4 shadow-[0_12px_34px_rgba(38,55,95,0.08)] transition hover:border-[#7dd3fc] active:scale-[0.98]"
+                  className="rounded-[22px] border border-[#e2e8f0] bg-white p-4 shadow-[0_12px_34px_rgba(15,23,42,0.05)] transition hover:border-[#bfdbfe] active:scale-[0.98]"
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#eef7ff] text-[#46216f]">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#1e3a8a]">
                       <Icon
                         name={channel.kind.includes("building") ? "building" : "users"}
                         className="h-[18px] w-[18px]"
                       />
                     </span>
                     <span
-                      className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
-                        status === "거주 중"
-                          ? "border-[#46216f] bg-[#46216f] text-white"
-                          : "border-[#d6e7f4] bg-[#f8fbff] text-[#4a5d7a]"
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                        active ? "bg-[#111827] text-white" : "bg-[#eff6ff] text-[#1d4ed8]"
                       }`}
                     >
                       {status}
                     </span>
                   </div>
-                  <p className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-[-0.02em] text-[#172033]">
+                  <p className="line-clamp-2 text-[15px] font-bold leading-snug tracking-[-0.03em] text-[#0f172a]">
                     {channel.title}
                   </p>
-                  <p className="mt-1 text-[13px] text-[#8a79b7]">
+                  <p className="mt-1 text-[12px] text-[#94a3b8]">
                     {channel.kind.includes("building") ? "건물 채널" : "지역 채널"}
                   </p>
                 </Link>
@@ -305,32 +297,32 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mx-auto w-full max-w-6xl px-4 pb-5 pt-8 min-[390px]:px-5 md:px-8">
-        <SectionTitle title="지금 이웃들의 이야기" href="/feed" code="FEED" />
-        <div className="overflow-hidden rounded-[28px] border border-[#d6e7f4] bg-white/95 shadow-[0_12px_34px_rgba(38,55,95,0.08)] md:grid md:grid-cols-3">
+      <section className="mx-auto w-full max-w-6xl px-5 pb-5 pt-8 md:px-8">
+        <SectionTitle title="지금 이웃들의 이야기" href="/feed" eyebrow="FEED" />
+        <div className="overflow-hidden rounded-[24px] border border-[#e2e8f0] bg-white shadow-[0_12px_34px_rgba(15,23,42,0.05)] md:grid md:grid-cols-3">
           {hotPosts.map((post, index) => (
             <Link
               key={post.id}
               href={`/post/${post.id}`}
-              className={`block p-4 transition active:bg-[#f7f9f4] md:min-h-[124px] ${
-                index > 0 ? "border-t border-[#edf1eb] md:border-l md:border-t-0" : ""
+              className={`block p-4 transition hover:bg-[#f8fafc] ${
+                index > 0 ? "border-t border-[#e2e8f0] md:border-l md:border-t-0" : ""
               }`}
             >
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full bg-[#eef7ff] px-2.5 py-1 text-[12px] font-semibold text-[#46216f]">
+                <span className="rounded-full bg-[#eff6ff] px-2.5 py-1 text-[12px] font-bold text-[#1d4ed8]">
                   {post.category}
                 </span>
-                <span className="truncate text-[12px] text-[#8a79b7]">
+                <span className="truncate text-[12px] text-[#94a3b8]">
                   {channelMap.get(post.channelId)?.title}
                 </span>
               </div>
-              <p className="line-clamp-1 text-[15px] font-semibold tracking-[-0.02em] text-[#172033]">
+              <p className="line-clamp-1 text-[15px] font-bold tracking-[-0.03em] text-[#0f172a]">
                 {post.title}
               </p>
-              <div className="mt-2 flex items-center gap-3 text-[12px] text-[#8a79b7]">
+              <div className="mt-2 flex items-center gap-3 text-[12px] text-[#94a3b8]">
                 <span>{post.authorNickname}</span>
-                <span>좋아요 {post.likes}</span>
-                <span>댓글 {post.commentCount}</span>
+                <span>좋아요 {formatCount(post.likes)}</span>
+                <span>댓글 {formatCount(post.commentCount)}</span>
               </div>
             </Link>
           ))}
@@ -340,14 +332,23 @@ export default function HomePage() {
   );
 }
 
-function SectionTitle({ title, href, code }: { title: string; href: string; code: string }) {
+function Metric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl bg-white/8 p-3">
+      <p className="text-[11px] font-semibold text-white/55">{label}</p>
+      <p className="mt-1 text-[22px] font-black tracking-[-0.05em]">{value}</p>
+    </div>
+  );
+}
+
+function SectionTitle({ title, href, eyebrow }: { title: string; href: string; eyebrow: string }) {
   return (
     <div className="mb-3 flex items-end justify-between gap-3">
       <div>
-        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#46216f]">{code}</p>
-        <h2 className="text-[20px] font-semibold tracking-[-0.045em] text-[#172033]">{title}</h2>
+        <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#2563eb]">{eyebrow}</p>
+        <h2 className="text-[21px] font-black tracking-[-0.05em] text-[#0f172a]">{title}</h2>
       </div>
-      <Link href={href} className="flex items-center gap-1 text-[13px] font-semibold text-[#4a5d7a]">
+      <Link href={href} className="flex items-center gap-1 text-[13px] font-bold text-[#64748b]">
         전체 보기
         <Icon name="arrowRight" className="h-3.5 w-3.5" />
       </Link>

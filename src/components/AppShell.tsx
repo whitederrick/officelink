@@ -43,19 +43,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell flex flex-col">
       {!isOnboarding && (
-        <header className="sticky top-0 z-30 border-b border-[#d6e7f4] bg-[#fbfdff]/86 backdrop-blur-xl">
-          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 min-[390px]:px-5 md:px-8">
+        <header className="sticky top-0 z-30 border-b border-[#e2e8f0] bg-white/86 backdrop-blur-xl">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 md:px-8">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#101a33] via-[#46216f] to-[#7dd3fc] text-white shadow-[0_10px_24px_rgba(70,33,111,0.24)]">
-                <div className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#7dd3fc]" />
-                <Icon name="building" className="h-4.5 w-4.5" />
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-[#111827] text-white shadow-[0_12px_28px_rgba(15,23,42,0.18)]">
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#38bdf8]" />
+                <Icon name="building" className="h-[18px] w-[18px]" />
               </div>
               <div className="leading-none">
-                <span className="block text-[15px] font-semibold tracking-[-0.03em] text-[#172033] min-[390px]:text-[16px]">
+                <span className="block text-[16px] font-black tracking-[-0.04em] text-[#0f172a]">
                   OFFICELINK
                 </span>
-                <span className="hidden text-[9px] font-bold uppercase tracking-[0.18em] text-[#46216f] min-[390px]:block">
-                  urban grid
+                <span className="hidden text-[9px] font-black uppercase tracking-[0.2em] text-[#2563eb] min-[390px]:block">
+                  urban living
                 </span>
               </div>
             </Link>
@@ -66,26 +66,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     href="/search"
                     aria-label="검색"
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-[#4a5d7a] hover:bg-[#eef7ff]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-[#475569] hover:bg-[#f1f5f9]"
                   >
                     <Icon name="search" className="h-[19px] w-[19px]" />
                   </Link>
                   <Link
                     href="/notifications"
                     aria-label="알림"
-                    className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#4a5d7a] hover:bg-[#eef7ff]"
+                    className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#475569] hover:bg-[#f1f5f9]"
                   >
                     <Icon name="bell" className="h-[19px] w-[19px]" />
                     {unread > 0 && (
-                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#7dd3fc] px-1 text-[10px] font-bold text-[#172033]">
+                      <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#38bdf8] px-1 text-[10px] font-black text-[#0f172a]">
                         {unread > 9 ? "9+" : unread}
                       </span>
                     )}
                   </Link>
                   <Link
                     href="/dm"
-                    aria-label="쪽지"
-                    className="hidden h-9 w-9 items-center justify-center rounded-full text-[#4a5d7a] hover:bg-[#eef7ff] min-[390px]:flex"
+                    aria-label="메시지"
+                    className="hidden h-9 w-9 items-center justify-center rounded-full text-[#475569] hover:bg-[#f1f5f9] min-[390px]:flex"
                   >
                     <Icon name="message" className="h-[19px] w-[19px]" />
                   </Link>
@@ -94,12 +94,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
               {ready && user ? (
                 <Link href="/profile" className="ml-1 flex items-center">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-2xl border border-[#d6e7f4] bg-white text-[13px] font-semibold text-[#172033] shadow-sm">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-2xl border border-[#e2e8f0] bg-white text-[13px] font-black text-[#0f172a] shadow-sm">
                     {user.nickname.slice(0, 1)}
                   </span>
                 </Link>
               ) : (
-                <Link href="/onboarding" className="text-[13px] font-semibold text-[#172033]">
+                <Link href="/onboarding" className="text-[13px] font-bold text-[#0f172a]">
                   시작하기
                 </Link>
               )}
@@ -119,7 +119,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <InstallBanner />
 
       {!isOnboarding && ready && user && (
-        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#d6e7f4] bg-[#fbfdff]/88 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#e2e8f0] bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
           <div className="mx-auto flex h-[70px] w-full max-w-6xl px-3 md:px-8">
             {TABS.map((tab) => {
               const active =
@@ -128,17 +128,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition ${
-                    active ? "text-[#46216f]" : "text-[#8a79b7]"
+                  className={`relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] font-bold transition ${
+                    active ? "text-[#111827]" : "text-[#94a3b8]"
                   }`}
                 >
                   {active && (
-                    <span className="absolute top-2 h-1 w-7 rounded-full bg-gradient-to-r from-[#46216f] via-[#7dd3fc] to-[#6d3bd1]" />
+                    <span className="absolute top-2 h-1 w-7 rounded-full bg-gradient-to-r from-[#2563eb] to-[#38bdf8]" />
                   )}
                   <Icon
                     name={tab.icon}
                     className="h-[21px] w-[21px]"
-                    strokeWidth={active ? 2.25 : 1.8}
+                    strokeWidth={active ? 2.35 : 1.85}
                   />
                   <span>{tab.label}</span>
                 </Link>
