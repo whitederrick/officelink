@@ -4,26 +4,21 @@
 
 :root {
   color-scheme: light;
-  --brand-ink: #0f172a;
-  --brand-ink-2: #334155;
-  --brand-sky: #38bdf8;
-  --brand-blue: #2563eb;
-  --brand-purple: #7c3aed;
-  --brand-accent: #38bdf8;
+  --brand-ink: #191f28;
+  --brand-ink-2: #4e5968;
+  --brand-blue: #3182f6;
+  --brand-accent: #3182f6;
   --brand-accent-soft: #eff6ff;
-  --brand-mist: #f7f9fc;
+  --brand-mist: #f5f7fb;
   --brand-paper: #ffffff;
-  --bg-base: #f7f9fc;
+  --bg-base: #f5f7fb;
   --bg-card: #ffffff;
-  --border: #e2e8f0;
+  --border: #eef0f3;
 }
 
 html,
 body {
-  background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 34rem),
-    radial-gradient(circle at top right, rgba(124, 58, 237, 0.1), transparent 32rem),
-    var(--bg-base);
+  background: var(--bg-base);
   color: var(--brand-ink);
   font-family:
     "Pretendard Variable",
@@ -55,13 +50,13 @@ body {
 @media (min-width: 768px) {
   .app-shell {
     width: calc(100% - 48px);
-    max-width: 1180px;
+    max-width: 720px;
     margin-top: 24px;
     margin-bottom: 24px;
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    border: 1px solid rgba(238, 240, 243, 0.9);
     border-radius: 28px;
     overflow: clip;
-    box-shadow: 0 28px 90px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 24px 80px rgba(25, 31, 40, 0.08);
   }
 }
 
